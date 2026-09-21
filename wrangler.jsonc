@@ -8,6 +8,13 @@
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "overdrive",
+      "database_id": "36cee0a4-cbdc-4f0f-9269-3c68edb0def1"
+    }
+  ],
   "vars": {
     "ADMIN_EMAILS": "Info@OverdriveAccountingServices.com"
   }
