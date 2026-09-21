@@ -9,6 +9,14 @@ pnpm install
 pnpm dev
 ```
 
+For local Worker/API development, copy `.dev.vars.example` to `.dev.vars` and run:
+
+```bash
+npx wrangler dev
+```
+
+`.dev.vars` is ignored by Git. Production deployments use Cloudflare Runtime secrets instead of a project `.env` file.
+
 ## Cloudflare setup
 
 1. Create a D1 database:

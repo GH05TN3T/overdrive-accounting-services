@@ -1,0 +1,4 @@
+ADMIN_EMAILS=Info@OverdriveAccountingServices.com,cyborgjedi@outlook.com
+ADMIN_PASSWORD=replace-with-a-local-password
+ADMIN_SESSION_SECRET=replace-with-a-long-random-string
+TURNSTILE_SECRET_KEY=replace-with-your-turnstile-secret
