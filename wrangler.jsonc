@@ -15,6 +15,12 @@
       "database_id": "36cee0a4-cbdc-4f0f-9269-3c68edb0def1"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "DOCUMENTS",
+      "bucket_name": "overdrive"
+    }
+  ],
   "vars": {
     "ADMIN_EMAILS": "Info@OverdriveAccountingServices.com"
   }
