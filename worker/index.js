@@ -11,12 +11,11 @@ function adminEmails(env) {
 }
 
 function configured(env) {
-  return { database: Boolean(env.DB), documents: Boolean(env.DOCUMENTS) }
+  return { database: Boolean(env.DB), documents: Boolean(env.DOCUMENTS), clientAccounts: Boolean(env.CLIENT_SESSION_SECRET) }
 }
 
-function requireUser(request) {
-  const email = accessEmail(request)
-  return email ? email : null
+async function requireUser(request, env) {
+  return clientSessionEmail(request, env)
 }
 
 function cookieValue(request, name) {
@@ -47,6 +46,47 @@ async function createSession(email, env) {
   const payload = `${email}|${Date.now() + 8 * 60 * 60 * 1000}`
   const signature = await hmac(env.ADMIN_SESSION_SECRET, payload)
   return `${base64UrlEncode(payload)}.${base64UrlEncode(signature)}`
+}
+
+function bytesToHex(bytes) {
+  return [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+function hexToBytes(value) {
+  return new Uint8Array(value.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)))
+}
+
+async function hashPassword(password, salt = crypto.getRandomValues(new Uint8Array(16))) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits'])
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 120000, hash: 'SHA-256' }, key, 256)
+  return `${bytesToHex(salt)}:${bytesToHex(bits)}`
+}
+
+async function verifyPassword(password, storedHash) {
+  const [saltHex, expectedHash] = storedHash.split(':')
+  const actualHash = (await hashPassword(password, hexToBytes(saltHex))).split(':')[1]
+  return actualHash === expectedHash
+}
+
+async function createClientSession(email, env) {
+  const payload = `${email}|${Date.now() + 8 * 60 * 60 * 1000}`
+  const signature = await hmac(env.CLIENT_SESSION_SECRET, payload)
+  return `${base64UrlEncode(payload)}.${base64UrlEncode(signature)}`
+}
+
+async function clientSessionEmail(request, env) {
+  const access = accessEmail(request)
+  if (access) return access
+  const token = cookieValue(request, 'overdrive_client')
+  if (!token || !env.CLIENT_SESSION_SECRET) return null
+  const [encodedPayload, encodedSignature] = token.split('.')
+  if (!encodedPayload || !encodedSignature) return null
+  try {
+    const payload = new TextDecoder().decode(base64UrlDecode(encodedPayload))
+    const [email, expiresAt] = payload.split('|')
+    const valid = Boolean(email) && Number(expiresAt) > Date.now() && await hmac(env.CLIENT_SESSION_SECRET, payload, true, base64UrlDecode(encodedSignature))
+    return valid ? email : null
+  } catch { return null }
 }
 
 async function sessionEmail(request, env) {
@@ -144,8 +184,38 @@ async function handleApi(request, env) {
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': 'overdrive_admin=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0' } })
   }
 
+  if (path === '/api/client/register' && method === 'POST') {
+    if (!env.DB || !env.CLIENT_SESSION_SECRET) return json({ error: 'Client account storage is not configured in Cloudflare.' }, 503)
+    const body = await request.json()
+    const email = (body.email || '').trim().toLowerCase()
+    if (!email || !body.password || !body.name) return json({ error: 'Name, email, and password are required.' }, 400)
+    if (body.password.length < 8) return json({ error: 'Password must be at least 8 characters.' }, 400)
+    const existing = await env.DB.prepare('SELECT email FROM client_users WHERE email = ?').bind(email).first()
+    if (existing) return json({ error: 'An account already exists for this email.' }, 409)
+    const passwordHash = await hashPassword(body.password)
+    await env.DB.prepare('INSERT INTO client_users (email, password_hash, name, business) VALUES (?, ?, ?, ?)').bind(email, passwordHash, body.name.trim(), body.business?.trim() || '').run()
+    await ensureClient(env, email, body.name, body.business || '')
+    const token = await createClientSession(email, env)
+    return new Response(JSON.stringify({ authenticated: true, email }), { status: 201, headers: { 'Content-Type': 'application/json', 'Set-Cookie': `overdrive_client=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=28800` } })
+  }
+
+  if (path === '/api/client/login' && method === 'POST') {
+    if (!env.DB || !env.CLIENT_SESSION_SECRET) return json({ error: 'Client account storage is not configured in Cloudflare.' }, 503)
+    const body = await request.json()
+    const email = (body.email || '').trim().toLowerCase()
+    const user = await env.DB.prepare('SELECT email, password_hash FROM client_users WHERE email = ?').bind(email).first()
+    if (!user || !await verifyPassword(body.password || '', user.password_hash)) return json({ error: 'Invalid email or password.' }, 401)
+    await env.DB.prepare("UPDATE client_users SET last_login = datetime('now') WHERE email = ?").bind(email).run()
+    const token = await createClientSession(email, env)
+    return new Response(JSON.stringify({ authenticated: true, email }), { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': `overdrive_client=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=28800` } })
+  }
+
+  if (path === '/api/client/logout' && method === 'POST') {
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': 'overdrive_client=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0' } })
+  }
+
   if (path === '/api/client/session' && method === 'GET') {
-    const email = accessEmail(request)
+    const email = await requireUser(request, env)
     return json({ authenticated: Boolean(email), email, configured: setup })
   }
 
@@ -242,7 +312,7 @@ async function handleApi(request, env) {
   }
 
   if (path === '/api/client/documents' && method === 'GET') {
-    const email = requireUser(request)
+    const email = await requireUser(request, env)
     if (!email) return json({ error: 'Cloudflare Access client authentication required.' }, 401)
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
     const result = await env.DB.prepare('SELECT * FROM documents WHERE client_email = ? ORDER BY created_at DESC').bind(email).all()
@@ -250,7 +320,7 @@ async function handleApi(request, env) {
   }
 
   if ((path === '/api/client/documents' || path === '/api/admin/documents') && method === 'POST') {
-    const email = path.startsWith('/api/admin') ? await requireAdmin(request, env) : requireUser(request)
+    const email = path.startsWith('/api/admin') ? await requireAdmin(request, env) : await requireUser(request, env)
     if (!email) return json({ error: 'Cloudflare Access authentication required.' }, 401)
     const missing = missingBindings(env)
     if (missing.length) return json({ error: `Connect ${missing.join(' and ')} before uploading documents.` }, 503)
@@ -275,7 +345,7 @@ async function handleApi(request, env) {
   const documentMatch = path.match(/^\/api\/(admin|client)\/documents\/([^/]+)(?:\/download)?$/)
   if (documentMatch && method === 'GET') {
     const admin = await requireAdmin(request, env)
-    const email = admin || requireUser(request)
+    const email = admin || await requireUser(request, env)
     if (!email) return json({ error: 'Cloudflare Access authentication required.' }, 401)
     if (!env.DB || !env.DOCUMENTS) return json({ error: 'Cloudflare D1 and R2 are not connected yet.' }, 503)
     const document = await env.DB.prepare('SELECT * FROM documents WHERE id = ?').bind(documentMatch[2]).first()

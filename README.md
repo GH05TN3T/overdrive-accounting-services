@@ -47,7 +47,7 @@ npx wrangler secret put ADMIN_PASSWORD
 npx wrangler secret put ADMIN_SESSION_SECRET
 ```
 
-6. Remove any Cloudflare Access applications protecting `/admin*` and `/api/admin/*`; the admin dashboard uses the Worker credentials above. Client portal routes can still use Access with `/portal*` and `/api/client/*`.
+6. Remove any Cloudflare Access applications protecting `/admin*`, `/api/admin/*`, `/portal*`, and `/api/client/*`; admin and client workspaces use Worker credential sessions.
 7. Create a Cloudflare Turnstile widget for the site hostname. Add its public site key as the Cloudflare build variable `VITE_TURNSTILE_SITE_KEY`, then add the secret key:
 
 ```bash
@@ -59,6 +59,13 @@ npx wrangler secret put TURNSTILE_SECRET_KEY
 ```bash
 npx wrangler secret put RESEND_API_KEY
 npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migrations/0003_client_messaging.sql
+```
+
+9. Enable client accounts:
+
+```bash
+npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migrations/0004_client_accounts.sql
+npx wrangler secret put CLIENT_SESSION_SECRET
 ```
 
 Verify the domain in Resend and create a Cloudflare Email Routing rule for `Info@OverdriveAccountingServices.com` that sends to this Worker. Incoming messages are stored in D1 and appear under **Clients & inbox**. Outbound messages are sent through Resend.

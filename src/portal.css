@@ -41,6 +41,7 @@
 .portal-auth form, .admin-login form { background: var(--white); display: flex; flex-direction: column; gap: 19px; padding: 31px; }
 .portal-auth label, .admin-login label { display: flex; flex-direction: column; gap: 8px; }
 .portal-auth form .button, .admin-login form .button { align-self: flex-start; border: 0; cursor: pointer; margin-top: 5px; }
+.portal-mode-switch { background: none; border: 0; color: var(--orange); cursor: pointer; font-size: 12px; font-weight: 700; margin-top: 22px; padding: 0; }
 .back-link { align-items: center; color: var(--muted); display: inline-flex; font-size: 12px; gap: 8px; margin-top: 26px; }
 .portal-title, .dashboard-heading { align-items: end; display: flex; justify-content: space-between; }
 .portal-title h1, .dashboard-heading h1 { font-size: clamp(43px, 5vw, 66px); font-weight: 500; letter-spacing: -.07em; line-height: .95; margin: 22px 0 17px; }

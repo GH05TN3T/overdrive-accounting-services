@@ -32,6 +32,15 @@ CREATE TABLE IF NOT EXISTS clients (
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS client_users (
+  email TEXT PRIMARY KEY,
+  password_hash TEXT NOT NULL,
+  name TEXT NOT NULL DEFAULT '',
+  business TEXT DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  last_login TEXT DEFAULT ''
+);
+
 CREATE TABLE IF NOT EXISTS email_messages (
   id TEXT PRIMARY KEY,
   client_email TEXT NOT NULL,
