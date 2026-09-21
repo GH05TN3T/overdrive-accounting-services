@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ArrowUpRight, CheckCircle2, LoaderCircle } from 'lucide-react'
-import { hasSupabaseConfig, supabase } from '../lib/supabase'
+import { apiRequest } from '../lib/api'
 
 const initialForm = { name: '', email: '', business: '', service: 'Accounting & bookkeeping', appointment_date: '', notes: '' }
 
@@ -14,13 +14,9 @@ export default function AppointmentForm() {
     event.preventDefault()
     setState({ loading: true, error: '', submitted: false, demo: false })
 
-    if (!hasSupabaseConfig) {
-      setState({ loading: false, error: '', submitted: true, demo: true })
-      return
-    }
-
-    const { error } = await supabase.from('appointments').insert(form)
-    if (error) {
+    try {
+      await apiRequest('/api/appointments', { method: 'POST', body: JSON.stringify(form) })
+    } catch (error) {
       setState({ loading: false, error: error.message, submitted: false, demo: false })
       return
     }
@@ -30,7 +26,7 @@ export default function AppointmentForm() {
   }
 
   if (state.submitted) {
-    return <div className="appointment-success"><CheckCircle2 size={28} /><div><strong>Request received.</strong><p>{state.demo ? 'This demo request is ready to connect once Supabase is configured.' : 'Our team will review your request and follow up within 24 hours.'}</p><button className="text-link" onClick={() => setState({ loading: false, error: '', submitted: false, demo: false })}>Send another request <ArrowUpRight size={16} /></button></div></div>
+    return <div className="appointment-success"><CheckCircle2 size={28} /><div><strong>Request received.</strong><p>Our team will review your request and follow up within 24 hours.</p><button className="text-link" onClick={() => setState({ loading: false, error: '', submitted: false, demo: false })}>Send another request <ArrowUpRight size={16} /></button></div></div>
   }
 
   return <form className="appointment-form" onSubmit={submitAppointment}>

@@ -105,6 +105,8 @@
 .status-cancelled { background: #eeeeee; color: var(--muted); }
 .admin-document-list { margin-top: 22px; }
 .admin-document-row { align-items: center; border-bottom: 1px solid var(--line); display: flex; gap: 8px; padding: 15px 0; }
+.admin-document-row > a { align-items: center; color: var(--ink); display: flex; gap: 11px; min-width: 0; text-align: left; text-decoration: none; }
+.admin-document-row > a > span:last-child { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .admin-document-row > button:first-child { align-items: center; background: none; border: 0; cursor: pointer; display: flex; gap: 11px; min-width: 0; padding: 0; text-align: left; }
 .admin-document-row > button:first-child > span:last-child { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .admin-document-row strong, .admin-document-row small { display: block; max-width: 205px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

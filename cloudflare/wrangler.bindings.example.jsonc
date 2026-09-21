@@ -1,0 +1,15 @@
+{
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "overdrive-accounting",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "DOCUMENTS",
+      "bucket_name": "overdrive-client-documents"
+    }
+  ]
+}

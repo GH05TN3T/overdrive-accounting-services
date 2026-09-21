@@ -1,6 +1,6 @@
 # Overdrive Accounting Services
 
-React/Vite website with a Supabase-powered appointment flow, client document portal, and admin dashboard.
+React/Vite website with Cloudflare Worker APIs, D1 appointments, R2 client documents, and Cloudflare Access workspaces.
 
 ## Local development
 
@@ -9,27 +9,30 @@ pnpm install
 pnpm dev
 ```
 
-## Supabase setup
+## Cloudflare setup
 
-1. Create a Supabase project.
-2. Copy `.env.example` to `.env`.
-3. Add the project URL and anon key from **Project Settings > API**.
-4. Run `supabase/schema.sql` in the Supabase SQL Editor.
-5. Enable Email auth under **Authentication > Providers**.
-6. Create the admin user under **Authentication > Users**.
-7. Promote that user by running this in the SQL Editor:
+1. Create a D1 database:
 
-```sql
-update public.profiles
-set role = 'admin'
-where id = 'AUTH_USER_UUID';
+```bash
+npx wrangler d1 create overdrive-accounting
+npx wrangler r2 bucket create overdrive-client-documents
 ```
 
-The public appointment form writes to `appointments`. Clients use `/portal` to sign in and upload files. Staff use `/admin` to review appointments and manage secure documents. Appointment and document changes are streamed to the admin dashboard with Supabase Realtime.
+2. Add the D1 `database_id` and R2 bucket binding from `cloudflare/wrangler.bindings.example.jsonc` to `wrangler.jsonc`.
+3. Create the tables remotely:
+
+```bash
+npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/schema.sql
+```
+
+4. Set `ADMIN_EMAILS` in `wrangler.jsonc` to the email addresses allowed into the admin workspace.
+5. Create Cloudflare Access applications for `/admin*`, `/api/admin/*`, `/portal*`, and `/api/client/*`. Restrict the admin paths to the staff email list; client paths can use the approved client email policy.
+
+The public appointment form writes to D1. Client documents are stored in the private R2 bucket. Staff use `/admin` to review appointments, change status, and manage documents. The dashboard polls for updates every 30 seconds and also has a manual refresh action.
 
 ## Cloudflare Pages
 
 - Build command: `pnpm build`
 - Output directory: `dist`
 - Production branch: `main`
-- Environment variables: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+- Deploy command: `npx wrangler deploy`
