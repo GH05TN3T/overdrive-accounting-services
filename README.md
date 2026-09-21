@@ -26,7 +26,14 @@ npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/schema.s
 ```
 
 4. Set `ADMIN_EMAILS` in `wrangler.jsonc` to the email addresses allowed into the admin workspace.
-5. Create Cloudflare Access applications for `/admin*`, `/api/admin/*`, `/portal*`, and `/api/client/*`. Restrict the admin paths to the staff email list; client paths can use the approved client email policy.
+5. Set the admin secrets. Do not commit these values:
+
+```bash
+npx wrangler secret put ADMIN_PASSWORD
+npx wrangler secret put ADMIN_SESSION_SECRET
+```
+
+6. Remove any Cloudflare Access applications protecting `/admin*` and `/api/admin/*`; the admin dashboard uses the Worker credentials above. Client portal routes can still use Access with `/portal*` and `/api/client/*`.
 
 The public appointment form writes to D1. Client documents are stored in the private R2 bucket. Staff use `/admin` to review appointments, change status, and manage documents. The dashboard polls for updates every 30 seconds and also has a manual refresh action.
 

@@ -17,9 +17,53 @@ function requireUser(request) {
   return email ? email : null
 }
 
-function requireAdmin(request, env) {
-  const email = accessEmail(request)
-  return email && adminEmails(env).includes(email) ? email : null
+function cookieValue(request, name) {
+  const cookies = request.headers.get('Cookie') || ''
+  const match = cookies.split(';').map((cookie) => cookie.trim()).find((cookie) => cookie.startsWith(`${name}=`))
+  return match ? match.slice(name.length + 1) : ''
+}
+
+function base64UrlEncode(value) {
+  const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : new Uint8Array(value)
+  let binary = ''
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte) })
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+function base64UrlDecode(value) {
+  const binary = atob(value.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - value.length % 4) % 4))
+  return new Uint8Array([...binary].map((character) => character.charCodeAt(0)))
+}
+
+async function hmac(secret, value, verify = false, signature) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify'])
+  if (verify) return crypto.subtle.verify('HMAC', key, signature, new TextEncoder().encode(value))
+  return crypto.subtle.sign('HMAC', key, new TextEncoder().encode(value))
+}
+
+async function createSession(email, env) {
+  const payload = `${email}|${Date.now() + 8 * 60 * 60 * 1000}`
+  const signature = await hmac(env.ADMIN_SESSION_SECRET, payload)
+  return `${base64UrlEncode(payload)}.${base64UrlEncode(signature)}`
+}
+
+async function sessionEmail(request, env) {
+  const access = accessEmail(request)
+  if (access && adminEmails(env).includes(access)) return access
+  const token = cookieValue(request, 'overdrive_admin')
+  if (!token || !env.ADMIN_SESSION_SECRET) return null
+  const [encodedPayload, encodedSignature] = token.split('.')
+  if (!encodedPayload || !encodedSignature) return null
+  try {
+    const payload = new TextDecoder().decode(base64UrlDecode(encodedPayload))
+    const [email, expiresAt] = payload.split('|')
+    const valid = adminEmails(env).includes(email) && Number(expiresAt) > Date.now() && await hmac(env.ADMIN_SESSION_SECRET, payload, true, base64UrlDecode(encodedSignature))
+    return valid ? email : null
+  } catch { return null }
+}
+
+async function requireAdmin(request, env) {
+  return sessionEmail(request, env)
 }
 
 function missingBindings(env) {
@@ -41,7 +85,21 @@ async function handleApi(request, env) {
 
   if (path === '/api/admin/session' && method === 'GET') {
     const email = accessEmail(request)
-    return json({ authenticated: Boolean(email), email, isAdmin: Boolean(requireAdmin(request, env)), configured: setup })
+    const admin = await requireAdmin(request, env)
+    return json({ authenticated: Boolean(admin), email: admin || email, isAdmin: Boolean(admin), configured: setup })
+  }
+
+  if (path === '/api/admin/login' && method === 'POST') {
+    if (!env.ADMIN_PASSWORD || !env.ADMIN_SESSION_SECRET) return json({ error: 'Admin password secrets are not configured in Cloudflare.' }, 503)
+    const body = await request.json()
+    const email = (body.email || '').trim().toLowerCase()
+    if (!adminEmails(env).includes(email) || body.password !== env.ADMIN_PASSWORD) return json({ error: 'Invalid admin email or password.' }, 401)
+    const token = await createSession(email, env)
+    return new Response(JSON.stringify({ authenticated: true, email, isAdmin: true }), { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': `overdrive_admin=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=28800` } })
+  }
+
+  if (path === '/api/admin/logout' && method === 'POST') {
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json', 'Set-Cookie': 'overdrive_admin=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0' } })
   }
 
   if (path === '/api/client/session' && method === 'GET') {
@@ -59,7 +117,7 @@ async function handleApi(request, env) {
   }
 
   if (path === '/api/admin/appointments' && method === 'GET') {
-    if (!requireAdmin(request, env)) return json({ error: 'Cloudflare Access admin authentication required.' }, 401)
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
     const result = await env.DB.prepare('SELECT * FROM appointments ORDER BY appointment_date ASC, created_at DESC').all()
     return json({ appointments: result.results || [] })
@@ -67,7 +125,7 @@ async function handleApi(request, env) {
 
   const appointmentMatch = path.match(/^\/api\/admin\/appointments\/([^/]+)$/)
   if (appointmentMatch && method === 'PATCH') {
-    if (!requireAdmin(request, env)) return json({ error: 'Cloudflare Access admin authentication required.' }, 401)
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
     const body = await request.json()
     const validStatuses = ['new', 'confirmed', 'completed', 'cancelled']
@@ -77,7 +135,7 @@ async function handleApi(request, env) {
   }
 
   if (path === '/api/admin/documents' && method === 'GET') {
-    if (!requireAdmin(request, env)) return json({ error: 'Cloudflare Access admin authentication required.' }, 401)
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
     const result = await env.DB.prepare('SELECT * FROM documents ORDER BY created_at DESC').all()
     return json({ documents: result.results || [] })
@@ -92,7 +150,7 @@ async function handleApi(request, env) {
   }
 
   if ((path === '/api/client/documents' || path === '/api/admin/documents') && method === 'POST') {
-    const email = path.startsWith('/api/admin') ? requireAdmin(request, env) : requireUser(request)
+    const email = path.startsWith('/api/admin') ? await requireAdmin(request, env) : requireUser(request)
     if (!email) return json({ error: 'Cloudflare Access authentication required.' }, 401)
     const missing = missingBindings(env)
     if (missing.length) return json({ error: `Connect ${missing.join(' and ')} before uploading documents.` }, 503)
@@ -116,7 +174,7 @@ async function handleApi(request, env) {
 
   const documentMatch = path.match(/^\/api\/(admin|client)\/documents\/([^/]+)(?:\/download)?$/)
   if (documentMatch && method === 'GET') {
-    const admin = requireAdmin(request, env)
+    const admin = await requireAdmin(request, env)
     const email = admin || requireUser(request)
     if (!email) return json({ error: 'Cloudflare Access authentication required.' }, 401)
     if (!env.DB || !env.DOCUMENTS) return json({ error: 'Cloudflare D1 and R2 are not connected yet.' }, 503)
@@ -132,7 +190,7 @@ async function handleApi(request, env) {
   }
 
   if (path.startsWith('/api/admin/documents/') && method === 'DELETE') {
-    if (!requireAdmin(request, env)) return json({ error: 'Cloudflare Access admin authentication required.' }, 401)
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
     if (!env.DB || !env.DOCUMENTS) return json({ error: 'Cloudflare D1 and R2 are not connected yet.' }, 503)
     const id = path.split('/').pop()
     const document = await env.DB.prepare('SELECT storage_path FROM documents WHERE id = ?').bind(id).first()
