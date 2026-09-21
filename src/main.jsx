@@ -15,7 +15,11 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
+import AdminDashboard from './components/AdminDashboard'
+import AppointmentForm from './components/AppointmentForm'
+import ClientPortal from './components/ClientPortal'
 import './styles.css'
+import './portal.css'
 
 const siteLogo = 'https://overdriveaccountingservices.com/wp-content/uploads/2024/05/WebLogo_White.png'
 const assetRoot = 'https://overdriveaccountingservices.com/wp-content/uploads/'
@@ -84,7 +88,7 @@ const partnerLogos = [
   { name: 'New Project', image: `${assetRoot}2026/09/New-Project.jpg` },
 ]
 
-function App() {
+function MarketingSite() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [testimonial, setTestimonial] = useState(0)
 
@@ -113,7 +117,7 @@ function App() {
           <a href="#about" onClick={closeMenu}>About us</a>
           <a href="#insights" onClick={closeMenu}>Insights</a>
           <a className="nav-phone" href="tel:352-749-2459" onClick={closeMenu}><Phone size={15} /> (352) 749-2459</a>
-          <a className="button button-small" href="#contact" onClick={closeMenu}>Let's talk <ArrowUpRight size={16} /></a>
+           <a className="button button-small" href="#appointment" onClick={closeMenu}>Let's talk <ArrowUpRight size={16} /></a>
         </nav>
       </header>
 
@@ -125,7 +129,7 @@ function App() {
             <h1>Turn your numbers into <em>momentum.</em></h1>
             <p className="hero-lede">Accounting should do more than keep up. Overdrive gives you the clarity, strategy, and support to move your business forward with confidence.</p>
             <div className="hero-actions">
-              <a className="button button-accent" href="#contact">Schedule a free consultation <ArrowUpRight size={18} /></a>
+              <a className="button button-accent" href="#appointment">Schedule a free consultation <ArrowUpRight size={18} /></a>
               <a className="text-link text-link-light" href="#approach"><span className="play-icon"><Play size={11} fill="currentColor" /></span> See how we work</a>
             </div>
             <div className="hero-assurance"><ShieldCheck size={17} /> Trusted financial guidance for businesses at every stage</div>
@@ -196,17 +200,25 @@ function App() {
           <div className="testimonial-viewport" aria-live="polite"><div className="testimonial-track" style={{ transform: `translateX(-${testimonial * 100}%)` }}>{testimonials.map((review) => <div className="testimonial-card" key={review.name}><div className="quote-mark">“</div><blockquote>{review.quote}</blockquote><div className="testimonial-author"><span className="avatar">{review.initials}</span><span><strong>{review.name}</strong><small>{review.role}</small></span></div><div className="google-note"><span className="google-g">G</span> Verified Google review</div></div>)}</div></div>
         </section>
 
-        <section className="insights section-pad" id="insights">
+         <section className="insights section-pad" id="insights">
           <div className="section-heading-row"><div><div className="section-kicker">From the journal <span /></div><h2>Useful thinking for <span>business owners.</span></h2></div><a className="text-link" href="#contact">View all insights <ArrowUpRight size={17} /></a></div>
           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={`${assetRoot}2024/06/Taxes2.jpg`} alt="Tax documents on a desk" /><span>Tax strategy</span></div><div className="insight-meta">April 22, 2025 <span>•</span> 5 min read</div><h3>2025 tax season checklist: Is your business ready?</h3><a className="text-link" href="#contact">Read article <ArrowUpRight size={16} /></a></article><div className="insight-list"><article><span className="insight-index">01</span><div><div className="insight-meta">March 10, 2025 <span>•</span> Tax strategy</div><h3>Avoid these common tax filing mistakes and save big this year</h3><a href="#contact">Read article <ArrowUpRight size={15} /></a></div></article><article><span className="insight-index">02</span><div><div className="insight-meta">February 10, 2025 <span>•</span> Business growth</div><h3>Top tax deductions every small business should know</h3><a href="#contact">Read article <ArrowUpRight size={15} /></a></div></article></div></div>
-        </section>
+         </section>
 
-        <section className="contact-section" id="contact"><div className="contact-bg-word">OVERDRIVE</div><div className="contact-inner"><div className="section-kicker eyebrow-light">Ready when you are <span /></div><h2>Let’s put your business <em>in motion.</em></h2><p>Tell us where you are headed. We’ll help you build the financial clarity to get there.</p><a className="button button-accent" href="mailto:Info@OverdriveAccountingServices.com">Start a conversation <ArrowUpRight size={18} /></a></div><div className="contact-curve" /></section>
+         <section className="appointment-section section-pad" id="appointment"><div className="appointment-layout"><div className="appointment-copy"><div className="section-kicker">Start with a conversation <span /></div><h2>Let’s find the <span>right next step.</span></h2><p>Tell us a little about your business and choose a preferred date. Our team will follow up to confirm the conversation.</p><div className="appointment-details"><span>01</span><p>Submit your request</p><span>02</span><p>We confirm the time</p><span>03</span><p>We get to work</p></div></div><div className="appointment-card"><div className="appointment-card-top"><span>Free consultation</span><small>Usually 30 minutes</small></div><AppointmentForm /></div></div></section>
+
+         <section className="contact-section" id="contact"><div className="contact-bg-word">OVERDRIVE</div><div className="contact-inner"><div className="section-kicker eyebrow-light">Ready when you are <span /></div><h2>Let’s put your business <em>in motion.</em></h2><p>Tell us where you are headed. We’ll help you build the financial clarity to get there.</p><a className="button button-accent" href="mailto:Info@OverdriveAccountingServices.com">Start a conversation <ArrowUpRight size={18} /></a></div><div className="contact-curve" /></section>
       </main>
 
-      <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#contact">Free consultation</a><a href="https://overdriveaccountingservices.securefilepro.com">Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
+      <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href="/portal">Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
     </div>
   )
+}
+
+function App() {
+  if (window.location.pathname === '/admin') return <AdminDashboard />
+  if (window.location.pathname === '/portal') return <ClientPortal />
+  return <MarketingSite />
 }
 
 createRoot(document.getElementById('root')).render(<StrictMode><App /></StrictMode>)
