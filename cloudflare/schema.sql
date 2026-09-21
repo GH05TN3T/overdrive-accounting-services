@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS documents (
   client_email TEXT NOT NULL,
   file_name TEXT NOT NULL,
   storage_path TEXT NOT NULL UNIQUE,
+  category TEXT NOT NULL DEFAULT 'Other',
+  is_published INTEGER NOT NULL DEFAULT 1,
+  published_at TEXT DEFAULT '',
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

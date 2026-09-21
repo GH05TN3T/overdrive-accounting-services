@@ -315,7 +315,7 @@ async function handleApi(request, env) {
     const email = await requireUser(request, env)
     if (!email) return json({ error: 'Cloudflare Access client authentication required.' }, 401)
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
-    const result = await env.DB.prepare('SELECT * FROM documents WHERE client_email = ? ORDER BY created_at DESC').bind(email).all()
+    const result = await env.DB.prepare('SELECT * FROM documents WHERE client_email = ? AND is_published = 1 ORDER BY created_at DESC').bind(email).all()
     return json({ documents: result.results || [] })
   }
 
@@ -327,6 +327,8 @@ async function handleApi(request, env) {
     const form = await request.formData()
     const file = form.get('file')
     const clientEmail = path.startsWith('/api/admin') ? (form.get('client_email') || email).toString().toLowerCase() : email
+    const category = ['Tax document', 'Payroll', 'Accounting', 'Other'].includes(form.get('category')) ? form.get('category').toString() : 'Other'
+    const isPublished = path.startsWith('/api/admin') ? form.get('is_published') === 'true' : true
     if (!(file instanceof File) || !file.size) return json({ error: 'Choose a file to upload.' }, 400)
     if (file.size > 25 * 1024 * 1024) return json({ error: 'Files must be smaller than 25 MB.' }, 400)
     const fileName = safeFileName(file.name)
@@ -334,12 +336,23 @@ async function handleApi(request, env) {
     await env.DOCUMENTS.put(storagePath, file.stream(), { httpMetadata: { contentType: file.type || 'application/octet-stream' } })
     const id = crypto.randomUUID()
     try {
-      await env.DB.prepare('INSERT INTO documents (id, client_email, file_name, storage_path) VALUES (?, ?, ?, ?)').bind(id, clientEmail, file.name, storagePath).run()
+      await env.DB.prepare('INSERT INTO documents (id, client_email, file_name, storage_path, category, is_published, published_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(id, clientEmail, file.name, storagePath, category, isPublished ? 1 : 0, isPublished ? new Date().toISOString() : '').run()
     } catch (error) {
       await env.DOCUMENTS.delete(storagePath)
       throw error
     }
-    return json({ document: { id, client_email: clientEmail, file_name: file.name, storage_path: storagePath, created_at: new Date().toISOString() } }, 201)
+    return json({ document: { id, client_email: clientEmail, file_name: file.name, storage_path: storagePath, category, is_published: isPublished ? 1 : 0, published_at: isPublished ? new Date().toISOString() : '', created_at: new Date().toISOString() } }, 201)
+  }
+
+  const documentAdminMatch = path.match(/^\/api\/admin\/documents\/([^/]+)$/)
+  if (documentAdminMatch && method === 'PATCH') {
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const body = await request.json()
+    const category = ['Tax document', 'Payroll', 'Accounting', 'Other'].includes(body.category) ? body.category : 'Other'
+    const isPublished = Boolean(body.is_published)
+    await env.DB.prepare("UPDATE documents SET category = ?, is_published = ?, published_at = ? WHERE id = ?").bind(category, isPublished ? 1 : 0, isPublished ? new Date().toISOString() : '', documentAdminMatch[1]).run()
+    return json({ ok: true })
   }
 
   const documentMatch = path.match(/^\/api\/(admin|client)\/documents\/([^/]+)(?:\/download)?$/)
@@ -349,7 +362,7 @@ async function handleApi(request, env) {
     if (!email) return json({ error: 'Cloudflare Access authentication required.' }, 401)
     if (!env.DB || !env.DOCUMENTS) return json({ error: 'Cloudflare D1 and R2 are not connected yet.' }, 503)
     const document = await env.DB.prepare('SELECT * FROM documents WHERE id = ?').bind(documentMatch[2]).first()
-    if (!document || (!admin && document.client_email !== email)) return json({ error: 'Document not found.' }, 404)
+    if (!document || (!admin && (document.client_email !== email || !document.is_published))) return json({ error: 'Document not found.' }, 404)
     const object = await env.DOCUMENTS.get(document.storage_path)
     if (!object) return json({ error: 'Stored file not found.' }, 404)
     const headers = new Headers()

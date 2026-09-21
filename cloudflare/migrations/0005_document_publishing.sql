@@ -1,0 +1,3 @@
+ALTER TABLE documents ADD COLUMN category TEXT NOT NULL DEFAULT 'Other';
+ALTER TABLE documents ADD COLUMN is_published INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE documents ADD COLUMN published_at TEXT DEFAULT '';
