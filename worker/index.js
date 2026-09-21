@@ -73,6 +73,19 @@ function missingBindings(env) {
   return missing
 }
 
+async function verifyTurnstile(request, env, token) {
+  if (!env.TURNSTILE_SECRET_KEY) return true
+  if (!token) return false
+  const form = new FormData()
+  form.append('secret', env.TURNSTILE_SECRET_KEY)
+  form.append('response', token)
+  const remoteIp = request.headers.get('CF-Connecting-IP')
+  if (remoteIp) form.append('remoteip', remoteIp)
+  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form })
+  const result = await response.json()
+  return result.success === true
+}
+
 function safeFileName(name) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 150)
 }
@@ -92,6 +105,7 @@ async function handleApi(request, env) {
   if (path === '/api/admin/login' && method === 'POST') {
     if (!env.ADMIN_PASSWORD || !env.ADMIN_SESSION_SECRET) return json({ error: 'Admin password secrets are not configured in Cloudflare.' }, 503)
     const body = await request.json()
+    if (!await verifyTurnstile(request, env, body.turnstile_token)) return json({ error: 'Complete the security check and try again.' }, 400)
     const email = (body.email || '').trim().toLowerCase()
     if (!adminEmails(env).includes(email) || body.password !== env.ADMIN_PASSWORD) return json({ error: 'Invalid admin email or password.' }, 401)
     const token = await createSession(email, env)
@@ -110,6 +124,7 @@ async function handleApi(request, env) {
   if (path === '/api/appointments' && method === 'POST') {
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
     const body = await request.json()
+    if (!await verifyTurnstile(request, env, body.turnstile_token)) return json({ error: 'Complete the security check and try again.' }, 400)
     if (!body.name || !body.email || !body.service || !body.appointment_date) return json({ error: 'Name, email, service, and preferred date are required.' }, 400)
     const id = crypto.randomUUID()
     await env.DB.prepare('INSERT INTO appointments (id, name, email, business, service, appointment_date, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, body.name.trim(), body.email.trim().toLowerCase(), body.business?.trim() || '', body.service, body.appointment_date, body.notes?.trim() || '', 'new').run()

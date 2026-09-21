@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { ArrowUpRight, CheckCircle2, LoaderCircle } from 'lucide-react'
 import { apiRequest } from '../lib/api'
+import TurnstileWidget from './TurnstileWidget'
 
 const initialForm = { name: '', email: '', business: '', service: 'Accounting & bookkeeping', appointment_date: '', notes: '' }
 
 export default function AppointmentForm() {
   const [form, setForm] = useState(initialForm)
+  const [turnstileToken, setTurnstileToken] = useState('')
   const [state, setState] = useState({ loading: false, error: '', submitted: false, demo: false })
 
   const updateField = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }))
@@ -15,13 +17,14 @@ export default function AppointmentForm() {
     setState({ loading: true, error: '', submitted: false, demo: false })
 
     try {
-      await apiRequest('/api/appointments', { method: 'POST', body: JSON.stringify(form) })
+      await apiRequest('/api/appointments', { method: 'POST', body: JSON.stringify({ ...form, turnstile_token: turnstileToken }) })
     } catch (error) {
       setState({ loading: false, error: error.message, submitted: false, demo: false })
       return
     }
 
     setForm(initialForm)
+    setTurnstileToken('')
     setState({ loading: false, error: '', submitted: true, demo: false })
   }
 
@@ -36,6 +39,7 @@ export default function AppointmentForm() {
     <div className="form-field"><label htmlFor="appointment_date">Preferred date</label><input id="appointment_date" name="appointment_date" type="date" value={form.appointment_date} onChange={updateField} required /></div>
     <div className="form-field form-field-wide"><label htmlFor="service">What can we help with?</label><select id="service" name="service" value={form.service} onChange={updateField}><option>Accounting & bookkeeping</option><option>Tax preparation & filing</option><option>Payroll management</option><option>Fractional CFO</option><option>Business advisory</option></select></div>
     <div className="form-field form-field-wide"><label htmlFor="notes">Anything we should know?</label><textarea id="notes" name="notes" value={form.notes} onChange={updateField} placeholder="Tell us a little about what you need." rows="4" /></div>
+    <TurnstileWidget onToken={setTurnstileToken} />
     {state.error && <p className="form-error">{state.error}</p>}
     <button className="button button-accent" disabled={state.loading} type="submit">{state.loading ? <><LoaderCircle className="spin" size={17} /> Sending request</> : <>Request a consultation <ArrowUpRight size={17} /></>}</button>
   </form>

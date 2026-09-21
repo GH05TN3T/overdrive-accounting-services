@@ -19,6 +19,7 @@
 .form-field input:focus, .form-field select:focus, .form-field textarea:focus, .portal-auth input:focus, .admin-login input:focus { border-color: var(--orange); box-shadow: 0 0 0 2px rgba(255,0,0,.08); }
 .appointment-form > .button { border: 0; cursor: pointer; justify-self: start; }
 .appointment-form > .button:disabled { cursor: wait; opacity: .7; }
+.turnstile-widget { grid-column: 1 / -1; min-height: 65px; }
 .form-error { color: var(--orange); font-size: 12px; line-height: 1.5; margin: 0; }
 .appointment-success { align-items: flex-start; background: var(--sand); display: flex; gap: 17px; padding: 28px; }
 .appointment-success > svg { color: var(--orange); flex: 0 0 auto; }

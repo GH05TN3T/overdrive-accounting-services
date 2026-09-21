@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, FileText, LoaderCircle, LogOut, RefreshCw, Search, Trash2, Users } from 'lucide-react'
 import { apiRequest } from '../lib/api'
+import TurnstileWidget from './TurnstileWidget'
 
 const filters = ['all', 'new', 'confirmed', 'completed', 'cancelled']
 
@@ -13,6 +14,7 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState('')
   const [refreshing, setRefreshing] = useState(false)
   const [credentials, setCredentials] = useState({ email: '', password: '' })
+  const [turnstileToken, setTurnstileToken] = useState('')
 
   const loadDashboard = async (showSpinner = false) => {
     if (showSpinner) setRefreshing(true)
@@ -41,7 +43,7 @@ export default function AdminDashboard() {
     event.preventDefault()
     setState((current) => ({ ...current, error: '' }))
     try {
-      await apiRequest('/api/admin/login', { method: 'POST', body: JSON.stringify(credentials) })
+      await apiRequest('/api/admin/login', { method: 'POST', body: JSON.stringify({ ...credentials, turnstile_token: turnstileToken }) })
       await loadDashboard()
     } catch (error) {
       setState((current) => ({ ...current, error: error.message }))
@@ -64,7 +66,7 @@ export default function AdminDashboard() {
 
   if (state.loading) return <DashboardFrame><LoaderCircle className="spin" /></DashboardFrame>
   if (!state.configured) return <DashboardFrame><CloudflareSetup message={state.error} /></DashboardFrame>
-  if (!session?.authenticated || !session?.isAdmin) return <DashboardFrame><AdminLogin credentials={credentials} setCredentials={setCredentials} error={state.error} onSubmit={signIn} /></DashboardFrame>
+  if (!session?.authenticated || !session?.isAdmin) return <DashboardFrame><AdminLogin credentials={credentials} setCredentials={setCredentials} error={state.error} onSubmit={signIn} onToken={setTurnstileToken} /></DashboardFrame>
 
   const visibleAppointments = appointments.filter((appointment) => (filter === 'all' || appointment.status === filter) && `${appointment.name} ${appointment.email} ${appointment.business || ''}`.toLowerCase().includes(search.toLowerCase()))
   const newCount = appointments.filter((appointment) => appointment.status === 'new').length
@@ -74,5 +76,5 @@ export default function AdminDashboard() {
 
 function Stat({ icon, label, value, accent }) { return <div className={`dashboard-stat ${accent ? 'is-accent' : ''}`}><span>{icon}</span><strong>{value}</strong><small>{label}</small></div> }
 function CloudflareSetup({ message }) { return <div className="setup-notice"><span className="portal-eyebrow">Dashboard not connected</span><h1>Connect Cloudflare D1 and R2.</h1><p>{message || 'Create the D1 database and R2 bucket, add their bindings to wrangler.jsonc, run cloudflare/schema.sql, then deploy again.'}</p><a className="button button-accent" href="https://dash.cloudflare.com" target="_blank" rel="noreferrer">Open Cloudflare <ArrowUpRight size={16} /></a></div> }
-function AdminLogin({ credentials, setCredentials, error, onSubmit }) { return <div className="admin-login"><span className="portal-eyebrow">Overdrive operations</span><h1>Admin sign in.</h1><p>Use the staff credentials configured as Cloudflare Worker secrets.</p><form onSubmit={onSubmit}><label>Email address<input type="email" value={credentials.email} onChange={(event) => setCredentials({ ...credentials, email: event.target.value })} required /></label><label>Password<input type="password" value={credentials.password} onChange={(event) => setCredentials({ ...credentials, password: event.target.value })} required /></label>{error && <p className="form-error">{error}</p>}<button className="button button-accent" type="submit">Sign in <ArrowUpRight size={16} /></button></form><a className="back-link" href="/"><ArrowUpRight size={15} /> View public website</a></div> }
+function AdminLogin({ credentials, setCredentials, error, onSubmit, onToken }) { return <div className="admin-login"><span className="portal-eyebrow">Overdrive operations</span><h1>Admin sign in.</h1><p>Use the staff credentials configured as Cloudflare Worker secrets.</p><form onSubmit={onSubmit}><label>Email address<input type="email" value={credentials.email} onChange={(event) => setCredentials({ ...credentials, email: event.target.value })} required /></label><label>Password<input type="password" value={credentials.password} onChange={(event) => setCredentials({ ...credentials, password: event.target.value })} required /></label><TurnstileWidget onToken={onToken} />{error && <p className="form-error">{error}</p>}<button className="button button-accent" type="submit">Sign in <ArrowUpRight size={16} /></button></form><a className="back-link" href="/"><ArrowUpRight size={15} /> View public website</a></div> }
 function DashboardFrame({ children, session, onSignOut }) { return <div className="dashboard-page"><header className="dashboard-header"><a href="/" className="portal-logo"><img src="https://overdriveaccountingservices.com/wp-content/uploads/2024/05/WebLogo_White.png" alt="Overdrive Accounting Services" /></a><div className="dashboard-user">{session?.email && <><span>{session.email}</span><button onClick={onSignOut}><LogOut size={15} /> Sign out</button></>}</div></header><main className="dashboard-content">{children}</main></div> }
