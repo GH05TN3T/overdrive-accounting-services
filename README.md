@@ -33,6 +33,12 @@ npx wrangler r2 bucket create overdrive-client-documents
 npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/schema.sql
 ```
 
+If the database already exists, also add the meeting fields:
+
+```bash
+npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migrations/0002_meeting_fields.sql
+```
+
 4. Set `ADMIN_EMAILS` in `wrangler.jsonc` to the email addresses allowed into the admin workspace.
 5. Set the admin secrets. Do not commit these values:
 

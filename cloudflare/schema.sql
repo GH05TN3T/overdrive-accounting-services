@@ -5,7 +5,11 @@ CREATE TABLE IF NOT EXISTS appointments (
   business TEXT DEFAULT '',
   service TEXT NOT NULL,
   appointment_date TEXT NOT NULL,
+  appointment_time TEXT DEFAULT '',
   notes TEXT DEFAULT '',
+  meeting_url TEXT DEFAULT '',
+  meeting_notes TEXT DEFAULT '',
+  cancellation_reason TEXT DEFAULT '',
   status TEXT NOT NULL DEFAULT 'new',
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))

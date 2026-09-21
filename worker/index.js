@@ -144,8 +144,23 @@ async function handleApi(request, env) {
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
     const body = await request.json()
     const validStatuses = ['new', 'confirmed', 'completed', 'cancelled']
-    if (!validStatuses.includes(body.status)) return json({ error: 'Invalid appointment status.' }, 400)
-    await env.DB.prepare('UPDATE appointments SET status = ?, updated_at = datetime(\'now\') WHERE id = ?').bind(body.status, appointmentMatch[1]).run()
+    const updates = []
+    const values = []
+    if (body.status !== undefined) {
+      if (!validStatuses.includes(body.status)) return json({ error: 'Invalid appointment status.' }, 400)
+      updates.push('status = ?')
+      values.push(body.status)
+    }
+    for (const field of ['appointment_time', 'meeting_url', 'meeting_notes', 'cancellation_reason']) {
+      if (body[field] !== undefined) {
+        updates.push(`${field} = ?`)
+        values.push(String(body[field] || '').trim())
+      }
+    }
+    if (!updates.length) return json({ error: 'No appointment changes were provided.' }, 400)
+    updates.push("updated_at = datetime('now')")
+    values.push(appointmentMatch[1])
+    await env.DB.prepare(`UPDATE appointments SET ${updates.join(', ')} WHERE id = ?`).bind(...values).run()
     return json({ ok: true })
   }
 
