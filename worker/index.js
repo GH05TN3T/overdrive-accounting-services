@@ -368,7 +368,9 @@ async function handleApi(request, env) {
     const headers = new Headers()
     object.writeHttpMetadata(headers)
     headers.set('etag', object.httpEtag)
-    headers.set('Content-Disposition', `attachment; filename="${safeFileName(document.file_name)}"`)
+    const previewable = /\.(pdf|png|jpe?g|gif|webp|txt|csv)$/i.test(document.file_name)
+    const disposition = url.searchParams.get('download') === '1' || !previewable ? 'attachment' : 'inline'
+    headers.set('Content-Disposition', `${disposition}; filename="${safeFileName(document.file_name)}"`)
     return new Response(object.body, { headers })
   }
 
