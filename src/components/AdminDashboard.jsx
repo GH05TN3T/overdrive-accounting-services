@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, ExternalLink, FileText, FolderOpen, LayoutDashboard, LoaderCircle, LogOut, Mail, RefreshCw, Save, Search, Settings, Trash2, Users, Video, X } from 'lucide-react'
+import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, ExternalLink, FileText, FolderOpen, LayoutDashboard, LoaderCircle, LogOut, Mail, RefreshCw, Save, Search, Settings, Trash2, UploadCloud, Users, Video, X } from 'lucide-react'
 import { apiRequest } from '../lib/api'
 import ClientManagement from './ClientManagement'
 import TurnstileWidget from './TurnstileWidget'
@@ -22,6 +22,8 @@ export default function AdminDashboard() {
   const [meetingForm, setMeetingForm] = useState(blankMeeting)
   const [savingMeeting, setSavingMeeting] = useState(false)
   const [activeView, setActiveView] = useState('overview')
+  const [documentClientEmail, setDocumentClientEmail] = useState('')
+  const [uploadingDocument, setUploadingDocument] = useState(false)
 
   const loadDashboard = async (showSpinner = false) => {
     if (showSpinner) setRefreshing(true)
@@ -85,6 +87,25 @@ export default function AdminDashboard() {
     } catch (error) { setState((current) => ({ ...current, error: error.message })) }
   }
 
+  const uploadDocument = async (event) => {
+    const file = event.target.files?.[0]
+    if (!file || !documentClientEmail) {
+      setState((current) => ({ ...current, error: 'Enter the client email before uploading a document.' }))
+      return
+    }
+    setUploadingDocument(true)
+    const form = new FormData()
+    form.append('file', file)
+    form.append('client_email', documentClientEmail)
+    try {
+      const result = await apiRequest('/api/admin/documents', { method: 'POST', body: form })
+      setDocuments((current) => [result.document, ...current])
+      setState((current) => ({ ...current, error: '' }))
+    } catch (error) { setState((current) => ({ ...current, error: error.message })) }
+    setUploadingDocument(false)
+    event.target.value = ''
+  }
+
   const navigateDashboard = (view) => {
     setActiveView(view)
     window.requestAnimationFrame(() => document.getElementById(view)?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
@@ -106,7 +127,7 @@ export default function AdminDashboard() {
     {state.error && <p className="form-error dashboard-error">{state.error}</p>}
     <div className="dashboard-grid">
       <section className="dashboard-panel appointments-panel" id="appointments"><div className="panel-heading"><div><span className="portal-eyebrow">Live queue</span><h2>Appointments</h2></div><span className="live-pill"><span /> Auto refresh</span></div><div className="table-tools"><div className="search-box"><Search size={16} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search clients" /></div><div className="filter-tabs">{filters.map((item) => <button className={filter === item ? 'active' : ''} key={item} onClick={() => setFilter(item)}>{item}</button>)}</div></div><div className="appointment-list">{visibleAppointments.length === 0 ? <div className="empty-state"><CalendarDays size={28} /><p>No appointments match this view.</p></div> : visibleAppointments.map((appointment) => <div className="appointment-row" key={appointment.id}><div className="appointment-date"><strong>{new Date(`${appointment.appointment_date}T12:00:00`).toLocaleDateString('en-US', { day: '2-digit' })}</strong><span>{new Date(`${appointment.appointment_date}T12:00:00`).toLocaleDateString('en-US', { month: 'short' })}</span></div><div className="appointment-details"><strong>{appointment.name}</strong><span>{appointment.business || 'Individual client'} - {appointment.service}</span><small>{appointment.email}{appointment.appointment_time ? ` - ${appointment.appointment_time}` : ''}</small></div><select className={`status-select status-${appointment.status}`} value={appointment.status} onChange={(event) => updateStatus(appointment.id, event.target.value)} aria-label={`Update status for ${appointment.name}`}><option value="new">New</option><option value="confirmed">Confirmed</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select><button className="manage-appointment" onClick={() => openAppointment(appointment)}>Manage</button></div>)}</div></section>
-      <section className="dashboard-panel documents-panel-admin" id="documents"><div className="panel-heading"><div><span className="portal-eyebrow">Cloudflare R2</span><h2>Client documents</h2></div><span>{documents.length} total</span></div><div className="document-search"><Search size={15} /><input value={documentSearch} onChange={(event) => setDocumentSearch(event.target.value)} placeholder="Search files or clients" /></div>{visibleDocuments.length === 0 ? <div className="empty-state"><FileText size={28} /><p>No documents match this search.</p></div> : <div className="admin-document-list">{visibleDocuments.slice(0, 10).map((document) => <div className="admin-document-row" key={document.id}><a href={`/api/admin/documents/${document.id}/download`}><span className="document-icon"><FileText size={18} /></span><span><strong>{document.file_name}</strong><small>{document.client_email}</small></span></a><button className="delete-document" onClick={() => deleteDocument(document)} aria-label={`Delete ${document.file_name}`}><Trash2 size={15} /></button></div>)}</div>}</section>
+      <section className="dashboard-panel documents-panel-admin" id="documents"><div className="panel-heading"><div><span className="portal-eyebrow">Cloudflare R2</span><h2>Client documents</h2></div><span>{documents.length} total</span></div><div className="document-actions"><div className="document-search"><Search size={15} /><input value={documentSearch} onChange={(event) => setDocumentSearch(event.target.value)} placeholder="Search files or clients" /></div><input className="document-client-email" type="email" value={documentClientEmail} onChange={(event) => setDocumentClientEmail(event.target.value)} placeholder="Client email for upload" /><label className="document-upload-button"><UploadCloud size={15} />{uploadingDocument ? 'Uploading...' : 'Upload file'}<input type="file" onChange={uploadDocument} disabled={uploadingDocument} /></label></div>{visibleDocuments.length === 0 ? <div className="empty-state"><FileText size={28} /><p>No documents match this search.</p></div> : <div className="admin-document-list">{visibleDocuments.slice(0, 10).map((document) => <div className="admin-document-row" key={document.id}><a href={`/api/admin/documents/${document.id}/download`}><span className="document-icon"><FileText size={18} /></span><span><strong>{document.file_name}</strong><small>{document.client_email}</small></span></a><button className="delete-document" onClick={() => deleteDocument(document)} aria-label={`Delete ${document.file_name}`}><Trash2 size={15} /></button></div>)}</div>}</section>
     </div>
     <section className="dashboard-panel calendar-panel" id="calendar"><CalendarView appointments={appointments} onSelectAppointment={openAppointment} /></section>
     <ClientManagement />
