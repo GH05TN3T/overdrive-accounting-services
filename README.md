@@ -54,6 +54,15 @@ npx wrangler secret put ADMIN_SESSION_SECRET
 npx wrangler secret put TURNSTILE_SECRET_KEY
 ```
 
+8. Set up client email:
+
+```bash
+npx wrangler secret put RESEND_API_KEY
+npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migrations/0003_client_messaging.sql
+```
+
+Verify the domain in Resend and create a Cloudflare Email Routing rule for `Info@OverdriveAccountingServices.com` that sends to this Worker. Incoming messages are stored in D1 and appear under **Clients & inbox**. Outbound messages are sent through Resend.
+
 The public appointment form writes to D1. Client documents are stored in the private R2 bucket. Staff use `/admin` to review appointments, change status, and manage documents. The dashboard polls for updates every 30 seconds and also has a manual refresh action.
 
 ## Cloudflare Pages

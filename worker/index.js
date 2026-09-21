@@ -1,3 +1,5 @@
+import PostalMime from 'postal-mime'
+
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 
 function accessEmail(request) {
@@ -90,6 +92,32 @@ function safeFileName(name) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 150)
 }
 
+async function ensureClient(env, email, name = '', business = '') {
+  await env.DB.prepare("INSERT INTO clients (email, name, business) VALUES (?, ?, ?) ON CONFLICT(email) DO UPDATE SET name = CASE WHEN excluded.name != '' THEN excluded.name ELSE clients.name END, business = CASE WHEN excluded.business != '' THEN excluded.business ELSE clients.business END, updated_at = datetime('now')").bind(email.toLowerCase(), name.trim(), business.trim()).run()
+}
+
+async function sendEmailWithResend(env, email, subject, text) {
+  if (!env.RESEND_API_KEY) return { error: 'RESEND_API_KEY is not configured in Cloudflare.' }
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: env.EMAIL_FROM || 'Info@OverdriveAccountingServices.com', to: [email], subject, text }),
+  })
+  const data = await response.json()
+  if (!response.ok) return { error: data.message || 'Resend could not send the email.' }
+  return { id: data.id || '' }
+}
+
+async function handleInboundEmail(message, env) {
+  if (!env.DB) throw new Error('D1 binding DB is not configured.')
+  const parsed = await new PostalMime().parse(await new Response(message.raw).arrayBuffer())
+  const email = (message.from || parsed.from?.address || '').trim().toLowerCase()
+  if (!email) return
+  const subject = parsed.subject || message.headers.get('subject') || '(no subject)'
+  await ensureClient(env, email, parsed.from?.name || '')
+  await env.DB.prepare('INSERT INTO email_messages (id, client_email, direction, subject, body_text, body_html, message_id, is_read) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), email, 'inbound', subject, parsed.text || '', parsed.html || '', message.headers.get('message-id') || '', 0).run()
+}
+
 async function handleApi(request, env) {
   const url = new URL(request.url)
   const path = url.pathname
@@ -127,7 +155,9 @@ async function handleApi(request, env) {
     if (!await verifyTurnstile(request, env, body.turnstile_token)) return json({ error: 'Complete the security check and try again.' }, 400)
     if (!body.name || !body.email || !body.service || !body.appointment_date) return json({ error: 'Name, email, service, and preferred date are required.' }, 400)
     const id = crypto.randomUUID()
-    await env.DB.prepare('INSERT INTO appointments (id, name, email, business, service, appointment_date, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, body.name.trim(), body.email.trim().toLowerCase(), body.business?.trim() || '', body.service, body.appointment_date, body.notes?.trim() || '', 'new').run()
+    const email = body.email.trim().toLowerCase()
+    await env.DB.prepare('INSERT INTO appointments (id, name, email, business, service, appointment_date, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, body.name.trim(), email, body.business?.trim() || '', body.service, body.appointment_date, body.notes?.trim() || '', 'new').run()
+    await ensureClient(env, email, body.name, body.business || '')
     return json({ id, status: 'new' }, 201)
   }
 
@@ -136,6 +166,39 @@ async function handleApi(request, env) {
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
     const result = await env.DB.prepare('SELECT * FROM appointments ORDER BY appointment_date ASC, created_at DESC').all()
     return json({ appointments: result.results || [] })
+  }
+
+  if (path === '/api/admin/clients' && method === 'GET') {
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const result = await env.DB.prepare("SELECT c.*, (SELECT COUNT(*) FROM email_messages m WHERE m.client_email = c.email AND m.direction = 'inbound' AND m.is_read = 0) AS unread_count, (SELECT MAX(created_at) FROM email_messages m WHERE m.client_email = c.email) AS last_message_at FROM clients c ORDER BY COALESCE(last_message_at, c.updated_at) DESC").all()
+    return json({ clients: result.results || [] })
+  }
+
+  if (path === '/api/admin/messages' && method === 'GET') {
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const email = (url.searchParams.get('client_email') || '').trim().toLowerCase()
+    if (!email) return json({ error: 'client_email is required.' }, 400)
+    await env.DB.prepare("UPDATE email_messages SET is_read = 1 WHERE client_email = ? AND direction = 'inbound'").bind(email).run()
+    const result = await env.DB.prepare('SELECT * FROM email_messages WHERE client_email = ? ORDER BY created_at ASC').bind(email).all()
+    return json({ messages: result.results || [] })
+  }
+
+  if (path === '/api/admin/messages' && method === 'POST') {
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const body = await request.json()
+    const email = (body.client_email || '').trim().toLowerCase()
+    const subject = (body.subject || '').trim()
+    const text = (body.body_text || '').trim()
+    if (!email || !subject || !text) return json({ error: 'Client email, subject, and message are required.' }, 400)
+    const sent = await sendEmailWithResend(env, email, subject, text)
+    if (sent.error) return json({ error: sent.error }, 503)
+    await ensureClient(env, email)
+    const id = crypto.randomUUID()
+    await env.DB.prepare('INSERT INTO email_messages (id, client_email, direction, subject, body_text, provider_id, is_read) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(id, email, 'outbound', subject, text, sent.id, 1).run()
+    return json({ message: { id, client_email: email, direction: 'outbound', subject, body_text: text, provider_id: sent.id, created_at: new Date().toISOString() } }, 201)
   }
 
   const appointmentMatch = path.match(/^\/api\/admin\/appointments\/([^/]+)$/)
@@ -240,5 +303,9 @@ export default {
     } catch (error) {
       return json({ error: error.message || 'Unexpected server error.' }, 500)
     }
+  },
+
+  async email(message, env) {
+    await handleInboundEmail(message, env)
   },
 }
