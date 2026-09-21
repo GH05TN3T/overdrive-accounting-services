@@ -227,6 +227,13 @@ async function handleApi(request, env) {
     return json({ ok: true })
   }
 
+  if (appointmentMatch && method === 'DELETE') {
+    if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    await env.DB.prepare('DELETE FROM appointments WHERE id = ?').bind(appointmentMatch[1]).run()
+    return json({ ok: true })
+  }
+
   if (path === '/api/admin/documents' && method === 'GET') {
     if (!await requireAdmin(request, env)) return json({ error: 'Admin authentication required.' }, 401)
     if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
