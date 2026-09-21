@@ -368,6 +368,9 @@ async function handleApi(request, env) {
     const headers = new Headers()
     object.writeHttpMetadata(headers)
     headers.set('etag', object.httpEtag)
+    const mimeTypes = { pdf: 'application/pdf', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', txt: 'text/plain; charset=utf-8', csv: 'text/csv; charset=utf-8', doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', xls: 'application/vnd.ms-excel', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+    const extension = document.file_name.split('.').pop().toLowerCase()
+    if (!headers.get('content-type') && mimeTypes[extension]) headers.set('content-type', mimeTypes[extension])
     const previewable = /\.(pdf|png|jpe?g|gif|webp|txt|csv)$/i.test(document.file_name)
     const disposition = url.searchParams.get('download') === '1' || !previewable ? 'attachment' : 'inline'
     headers.set('Content-Disposition', `${disposition}; filename="${safeFileName(document.file_name)}"`)
