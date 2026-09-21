@@ -167,7 +167,7 @@
 .document-state.draft { color: var(--orange); }
 .publish-document { background: none; border: 0; color: var(--orange); cursor: pointer; font-size: 10px; padding: 6px; }
 .document-row-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
-.document-row-actions a { align-items: center; color: var(--orange); display: inline-flex; font-size: 10px; font-weight: 700; gap: 5px; }
+.document-row-actions a, .document-row-actions button { align-items: center; background: none; border: 0; color: var(--orange); cursor: pointer; display: inline-flex; font: 700 10px 'DM Sans', sans-serif; gap: 5px; padding: 0; }
 .document-upload-button { align-items: center; background: var(--orange); color: var(--white); cursor: pointer; display: inline-flex; font-size: 10px; font-weight: 700; gap: 7px; justify-content: center; padding: 10px 13px; text-transform: uppercase; white-space: nowrap; }
 .document-upload-button input { display: none; }
 .drawer-backdrop { align-items: stretch; background: rgba(0,0,0,.42); display: flex; inset: 0; justify-content: flex-end; position: fixed; z-index: 20; }
