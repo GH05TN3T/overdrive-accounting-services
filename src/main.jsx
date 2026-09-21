@@ -49,6 +49,30 @@ const services = [
     description: 'The financial leadership and forward-looking perspective your next stage deserves.',
     image: `${assetRoot}2026/05/3501.jpg`,
   },
+  {
+    number: '05',
+    title: 'Small business lending',
+    description: 'Funding preparation that helps lenders see the strength and story behind your numbers.',
+    image: `${assetRoot}2024/06/LoanApplication.jpg`,
+  },
+  {
+    number: '06',
+    title: 'Benefits administration',
+    description: 'Organized benefits support that helps your team and your business stay competitive.',
+    image: `${assetRoot}2026/05/953.jpg`,
+  },
+  {
+    number: '07',
+    title: 'Business insurance management',
+    description: 'Practical coverage coordination that keeps risk visible as your company grows.',
+    image: `${assetRoot}2026/05/3822.jpg`,
+  },
+  {
+    number: '08',
+    title: 'Human resources',
+    description: 'People operations guidance that brings structure to the moments that matter.',
+    image: `${assetRoot}2026/05/4691.jpg`,
+  },
 ]
 
 const testimonials = [
@@ -88,9 +112,73 @@ const partnerLogos = [
   { name: 'New Project', image: `${assetRoot}2026/09/New-Project.jpg` },
 ]
 
+const insights = [
+  {
+    category: 'Tax & IRS',
+    date: 'September 4, 2026',
+    readTime: '4 min read',
+    title: '2026 payroll update: the Social Security wage base is $184,500',
+    summary: 'A practical review of the 2026 wage base, withholding responsibilities, and the payroll records employers should keep current.',
+    image: `${assetRoot}2024/06/PayrollManagement.jpg`,
+    source: 'IRS Publication 15',
+    sourceUrl: 'https://www.irs.gov/publications/p15',
+  },
+  {
+    category: 'Payroll & HR',
+    date: 'September 4, 2026',
+    readTime: '5 min read',
+    title: 'The employer checklist behind every accurate paycheck',
+    summary: 'The IRS reminder for National Payroll Week covers withholding, electronic deposits, filing, recordkeeping, and protecting payroll data.',
+    image: `${assetRoot}2024/06/Accounting.jpg`,
+    source: 'IRS newsroom',
+    sourceUrl: 'https://www.irs.gov/newsroom/irs-reminder-national-payroll-week-is-time-for-a-paycheck-checkup',
+  },
+  {
+    category: 'Tax & IRS',
+    date: 'March 2026',
+    readTime: '6 min read',
+    title: 'Form 941 in 2026: what employers need to review now',
+    summary: 'The March 2026 revision includes updated employment tax guidance, electronic refund payments, and the current filing reminders.',
+    image: `${assetRoot}2024/06/Taxes2.jpg`,
+    source: 'IRS Form 941 instructions',
+    sourceUrl: 'https://www.irs.gov/instructions/i941',
+  },
+  {
+    category: 'Tax law',
+    date: '2026 update',
+    readTime: '5 min read',
+    title: 'The $2,000 information reporting threshold: what changes for 2026',
+    summary: 'The IRS explains the updated threshold for certain 1099 and wage reporting situations after calendar year 2025.',
+    image: `${assetRoot}2024/06/Taxes2.jpg`,
+    source: 'IRS Publication 15',
+    sourceUrl: 'https://www.irs.gov/publications/p15',
+  },
+  {
+    category: 'Payroll & HR',
+    date: '2026 update',
+    readTime: '5 min read',
+    title: 'Qualified overtime compensation: the payroll workflow employers should revisit',
+    summary: 'A plain-English starting point for reviewing updated W-4 workflows and withholding procedures for qualified overtime.',
+    image: `${assetRoot}2024/06/PayrollManagement.jpg`,
+    source: 'IRS Form 941 instructions',
+    sourceUrl: 'https://www.irs.gov/instructions/i941',
+  },
+  {
+    category: 'Accounting',
+    date: 'Overdrive guide',
+    readTime: '4 min read',
+    title: 'The monthly close: a simple rhythm for better business decisions',
+    summary: 'Why clean books, reconciled accounts, and a short monthly review help owners make decisions before the next deadline arrives.',
+    image: `${assetRoot}2024/06/Accounting.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: '#appointment',
+  },
+]
+
 function MarketingSite() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [testimonial, setTestimonial] = useState(0)
+  const [insightCategory, setInsightCategory] = useState('All updates')
 
   useEffect(() => {
     const rotation = setInterval(() => {
@@ -101,6 +189,7 @@ function MarketingSite() {
   }, [])
 
   const closeMenu = () => setMenuOpen(false)
+  const visibleInsights = insightCategory === 'All updates' ? insights : insights.filter((post) => post.category === insightCategory)
 
   return (
     <div className="site-shell">
@@ -200,10 +289,11 @@ function MarketingSite() {
           <div className="testimonial-viewport" aria-live="polite"><div className="testimonial-track" style={{ transform: `translateX(-${testimonial * 100}%)` }}>{testimonials.map((review) => <div className="testimonial-card" key={review.name}><div className="quote-mark">“</div><blockquote>{review.quote}</blockquote><div className="testimonial-author"><span className="avatar">{review.initials}</span><span><strong>{review.name}</strong><small>{review.role}</small></span></div><div className="google-note"><span className="google-g">G</span> Verified Google review</div></div>)}</div></div>
         </section>
 
-         <section className="insights section-pad" id="insights">
-          <div className="section-heading-row"><div><div className="section-kicker">From the journal <span /></div><h2>Useful thinking for <span>business owners.</span></h2></div><a className="text-link" href="#contact">View all insights <ArrowUpRight size={17} /></a></div>
-          <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={`${assetRoot}2024/06/Taxes2.jpg`} alt="Tax documents on a desk" /><span>Tax strategy</span></div><div className="insight-meta">April 22, 2025 <span>•</span> 5 min read</div><h3>2025 tax season checklist: Is your business ready?</h3><a className="text-link" href="#contact">Read article <ArrowUpRight size={16} /></a></article><div className="insight-list"><article><span className="insight-index">01</span><div><div className="insight-meta">March 10, 2025 <span>•</span> Tax strategy</div><h3>Avoid these common tax filing mistakes and save big this year</h3><a href="#contact">Read article <ArrowUpRight size={15} /></a></div></article><article><span className="insight-index">02</span><div><div className="insight-meta">February 10, 2025 <span>•</span> Business growth</div><h3>Top tax deductions every small business should know</h3><a href="#contact">Read article <ArrowUpRight size={15} /></a></div></article></div></div>
-         </section>
+          <section className="insights section-pad" id="insights">
+           <div className="section-heading-row"><div><div className="section-kicker">From the journal <span /></div><h2>Useful thinking for <span>business owners.</span></h2></div><a className="text-link" href="https://www.irs.gov/newsroom" target="_blank" rel="noreferrer">Follow IRS updates <ArrowUpRight size={17} /></a></div>
+           <div className="insight-filters" aria-label="Filter insights">{['All updates', 'Tax & IRS', 'Tax law', 'Accounting', 'Payroll & HR'].map((category) => <button className={insightCategory === category ? 'active' : ''} key={category} onClick={() => setInsightCategory(category)}>{category}</button>)}</div>
+           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date} <span>•</span> {visibleInsights[0].readTime}</div><h3>{visibleInsights[0].title}</h3><p className="insight-summary">{visibleInsights[0].summary}</p><a className="text-link" href={visibleInsights[0].sourceUrl} target={visibleInsights[0].sourceUrl.startsWith('http') ? '_blank' : undefined} rel={visibleInsights[0].sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>{visibleInsights[0].source === 'Overdrive Accounting Services' ? 'Start a conversation' : `Read source: ${visibleInsights[0].source}`} <ArrowUpRight size={16} /></a></article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">0{index + 1}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3><p>{post.summary}</p><a href={post.sourceUrl} target={post.sourceUrl.startsWith('http') ? '_blank' : undefined} rel={post.sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>Read update <ArrowUpRight size={15} /></a></div></article>)}</div></div>
+          </section>
 
          <section className="appointment-section section-pad" id="appointment"><div className="appointment-layout"><div className="appointment-copy"><div className="section-kicker">Start with a conversation <span /></div><h2>Let’s find the <span>right next step.</span></h2><p>Tell us a little about your business and choose a preferred date. Our team will follow up to confirm the conversation.</p><div className="appointment-details"><span>01</span><p>Submit your request</p><span>02</span><p>We confirm the time</p><span>03</span><p>We get to work</p></div></div><div className="appointment-card"><div className="appointment-card-top"><span>Free consultation</span><small>Usually 30 minutes</small></div><AppointmentForm /></div></div></section>
 

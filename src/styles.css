@@ -139,6 +139,9 @@ blockquote { font-family: 'Playfair Display', serif; font-size: clamp(24px, 3vw,
 .google-note { align-items: center; color: var(--muted); display: flex; font-size: 10px; gap: 6px; position: absolute; right: clamp(25px, 5vw, 75px); top: 43px; }
 .google-g { color: #4285f4; font-size: 18px; font-weight: 700; }
 .insights { background: var(--paper); padding-top: 10px; }
+.insight-filters { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 38px; }
+.insight-filters button { background: transparent; border: 1px solid var(--line); color: var(--muted); cursor: pointer; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .04em; padding: 10px 13px; text-transform: uppercase; transition: background .2s, color .2s, border .2s; }
+.insight-filters button:hover, .insight-filters button.active { background: var(--ink); border-color: var(--ink); color: var(--white); }
 .insights-grid { display: grid; gap: 65px; grid-template-columns: 1.15fr .85fr; margin-top: 62px; }
 .insight-image { height: 270px; margin-bottom: 22px; overflow: hidden; position: relative; }
 .insight-image img { filter: saturate(.65); height: 100%; object-fit: cover; width: 100%; }
@@ -146,10 +149,12 @@ blockquote { font-family: 'Playfair Display', serif; font-size: clamp(24px, 3vw,
 .insight-meta { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .03em; text-transform: uppercase; }
 .insight-meta span { color: var(--orange); margin: 0 5px; }
 .featured-insight h3 { font-size: 25px; font-weight: 500; letter-spacing: -.04em; line-height: 1.15; margin: 12px 0 19px; max-width: 495px; }
+.insight-summary { color: var(--muted); font-size: 13px; line-height: 1.6; margin: -6px 0 19px; max-width: 500px; }
 .insight-list article { border-top: 1px solid var(--line); display: grid; gap: 30px; grid-template-columns: 35px 1fr; padding: 24px 0; }
 .insight-list article:last-child { border-bottom: 1px solid var(--line); }
 .insight-index { color: var(--orange); font-family: 'DM Mono', monospace; font-size: 11px; }
 .insight-list h3 { font-size: 18px; font-weight: 500; letter-spacing: -.03em; line-height: 1.2; margin: 12px 0 16px; max-width: 330px; }
+.insight-list p { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0 0 14px; max-width: 340px; }
 .insight-list a { align-items: center; color: var(--orange); display: inline-flex; font-size: 11px; font-weight: 700; gap: 7px; }
 .contact-section { background: var(--ink); color: var(--white); min-height: 480px; overflow: hidden; padding: 110px 24px; position: relative; text-align: center; }
 .contact-bg-word { color: rgba(255,255,255,.035); font-family: 'DM Sans', sans-serif; font-size: clamp(130px, 21vw, 340px); font-weight: 700; left: 50%; letter-spacing: -.1em; line-height: .7; position: absolute; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; }
