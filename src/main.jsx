@@ -306,8 +306,9 @@ function MarketingSite() {
 }
 
 function App() {
-  if (window.location.pathname === '/admin') return <AdminDashboard />
-  if (window.location.pathname === '/portal') return <ClientPortal />
+  const route = window.location.pathname.replace(/\/+$/, '') || '/'
+  if (route === '/admin') return <AdminDashboard />
+  if (route === '/portal') return <ClientPortal />
   return <MarketingSite />
 }
 
