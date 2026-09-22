@@ -241,10 +241,11 @@ function MarketingSite() {
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
         <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`}>
-          <a href="#services" onClick={closeMenu}>Services</a>
-          <a href="#approach" onClick={closeMenu}>Our approach</a>
-          <a href="#about" onClick={closeMenu}>About us</a>
-          <a href="#insights" onClick={closeMenu}>Insights</a>
+          <a className="nav-link" href="#services" onClick={closeMenu}>Services</a>
+          <a className="nav-link" href="#approach" onClick={closeMenu}>Our approach</a>
+          <a className="nav-link" href="#about" onClick={closeMenu}>About us</a>
+          <a className="nav-link" href="#insights" onClick={closeMenu}>Insights</a>
+          <a className="nav-link nav-portal" href="/portal" onClick={closeMenu}><span className="nav-portal-pulse" /> Client portal <ArrowUpRight size={14} /></a>
           <a className="nav-phone" href="tel:352-749-2459" onClick={closeMenu}><Phone size={15} /> (352) 749-2459</a>
            <a className="button button-small" href="#appointment" onClick={closeMenu}>Let's talk <ArrowUpRight size={16} /></a>
         </nav>
