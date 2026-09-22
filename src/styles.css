@@ -67,7 +67,7 @@ h1 em, h2 span { color: var(--orange); font-family: 'Playfair Display', serif; f
 .marquee { background: var(--orange); color: var(--ink); overflow: hidden; padding: 18px 0; }
 .marquee-track { align-items: center; animation: marquee 24s linear infinite; display: flex; font-family: 'DM Mono', monospace; font-size: 11px; gap: 31px; letter-spacing: .19em; min-width: max-content; white-space: nowrap; }
 .marquee-track svg { height: 14px; width: 14px; }
-@keyframes marquee { to { transform: translateX(-30%); } }
+@keyframes marquee { to { transform: translateX(-50%); } }
 .section-pad { padding: 126px clamp(24px, 9vw, 148px); }
 .section-kicker span { background: currentColor; display: block; height: 1px; width: 42px; }
 .intro { background: var(--paper); }
