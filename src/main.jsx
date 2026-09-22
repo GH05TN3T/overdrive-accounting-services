@@ -25,49 +25,49 @@ const services = [
   {
     number: '01',
     title: 'Accounting & bookkeeping',
-    description: 'Clean, current numbers that show you exactly where your business stands.',
+    description: '',
     image: `${assetRoot}2024/06/Accounting.jpg`,
   },
   {
     number: '02',
     title: 'Tax preparation & filing',
-    description: 'Proactive tax strategy and accurate filing without the last-minute scramble.',
+    description: '',
     image: `${assetRoot}2024/06/Taxes2.jpg`,
   },
   {
     number: '03',
     title: 'Payroll management',
-    description: 'Reliable, compliant payroll that lets you take care of your people with confidence.',
+    description: '',
     image: `${assetRoot}2024/06/PayrollManagement.jpg`,
   },
   {
     number: '04',
     title: 'Fractional CFO',
-    description: 'The financial leadership and forward-looking perspective your next stage deserves.',
+    description: '',
     image: `${assetRoot}2026/05/3501.jpg`,
   },
   {
     number: '05',
     title: 'Small business lending',
-    description: 'Funding preparation that helps lenders see the strength and story behind your numbers.',
+    description: '',
     image: `${assetRoot}2024/06/LoanApplication.jpg`,
   },
   {
     number: '06',
     title: 'Benefits administration',
-    description: 'Organized benefits support that helps your team and your business stay competitive.',
+    description: '',
     image: `${assetRoot}2026/05/953.jpg`,
   },
   {
     number: '07',
     title: 'Business insurance management',
-    description: 'Practical coverage coordination that keeps risk visible as your company grows.',
+    description: '',
     image: `${assetRoot}2026/05/3822.jpg`,
   },
   {
     number: '08',
     title: 'Human resources',
-    description: 'People operations guidance that brings structure to the moments that matter.',
+    description: '',
     image: `${assetRoot}2026/05/4691.jpg`,
   },
 ]
@@ -76,25 +76,25 @@ const testimonials = [
   {
     quote: 'The confidence I have in knowing my ducks are in a row with Overdrive in charge allows me to focus on the mission of my company.',
     name: 'Kelly N. Mawhinney',
-    role: 'Business owner',
+    role: '',
     initials: 'KM',
   },
   {
     quote: 'They are professional, get back to your inquiries in a timely manner, and suggest solutions that benefit your business.',
     name: 'Marilyn Anglade',
-    role: 'Overdrive client',
+    role: '',
     initials: 'MA',
   },
   {
     quote: 'Alex and his team work incredibly fast. Their response time for any questions I had was second to none.',
     name: 'Alyx Cassel',
-    role: 'Business owner',
+    role: '',
     initials: 'AC',
   },
   {
     quote: 'Business solutions tax preparation has qualified professionals. They always get back within 24 hours. The company is diversified and does more than just taxes; they do all small or large business needs.',
     name: 'Sullivan Plumbing LLC',
-    role: 'Overdrive client',
+    role: '',
     initials: 'SP',
   },
 ]
@@ -119,9 +119,9 @@ const insights = [
   {
     category: 'Tax strategy',
     date: 'April 22, 2025',
-    readTime: '5 min read',
+    readTime: '',
     title: '2025 Tax Season Checklist: Is Your Business Ready?',
-    summary: 'A practical checklist to help business owners prepare for tax season and keep financial operations on track.',
+    summary: '',
     image: `${assetRoot}2024/06/Taxes2.jpg`,
     source: 'Overdrive Accounting Services',
     sourceUrl: 'https://overdriveaccountingservices.com/2025-tax-season-checklist-is-your-business-ready/',
@@ -129,9 +129,9 @@ const insights = [
   {
     category: 'Tax strategy',
     date: 'March 10, 2025',
-    readTime: '5 min read',
+    readTime: '',
     title: 'Avoid These Common Tax Filing Mistakes and Save Big This Year',
-    summary: 'The filing mistakes business owners should watch for before submitting their returns.',
+    summary: '',
     image: `${assetRoot}2024/06/Taxes2.jpg`,
     source: 'Overdrive Accounting Services',
     sourceUrl: 'https://overdriveaccountingservices.com/avoid-these-common-tax-filing-mistakes-and-save-big-this-year/',
@@ -139,9 +139,9 @@ const insights = [
   {
     category: 'Business growth',
     date: 'February 10, 2025',
-    readTime: '5 min read',
+    readTime: '',
     title: 'Top Tax Deductions Every Small Business Should Know for 2025',
-    summary: 'A helpful look at deductions small business owners should discuss with their accounting partner.',
+    summary: '',
     image: `${assetRoot}2024/06/Accounting.jpg`,
     source: 'Overdrive Accounting Services',
     sourceUrl: 'https://overdriveaccountingservices.com/top-tax-deductions-every-small-business-should-know-for-2025/',
@@ -149,9 +149,9 @@ const insights = [
   {
     category: 'Payroll & HR',
     date: 'January 13, 2025',
-    readTime: '4 min read',
+    readTime: '',
     title: 'From Payroll to Taxes: How We Handle It All',
-    summary: 'How Overdrive helps businesses coordinate payroll, tax preparation, and financial operations.',
+    summary: '',
     image: `${assetRoot}2024/06/PayrollManagement.jpg`,
     source: 'Overdrive Accounting Services',
     sourceUrl: 'https://overdriveaccountingservices.com/from-payroll-to-taxes-how-we-handle-it-all/',
@@ -245,12 +245,12 @@ function MarketingSite() {
         </button>
         <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`}>
           <a className="nav-link" href="#services" onClick={closeMenu}>Services</a>
-          <a className="nav-link" href="#approach" onClick={closeMenu}>Our approach</a>
+          <a className="nav-link" href="#insights" onClick={closeMenu}>Resources</a>
           <a className="nav-link" href="#about" onClick={closeMenu}>About us</a>
           <a className="nav-link" href="#insights" onClick={closeMenu}>Insights</a>
           <a className="nav-link nav-portal" href="/portal" onClick={closeMenu}><span className="nav-portal-pulse" /> Client portal <ArrowUpRight size={14} /></a>
           <a className="nav-phone" href="tel:352-749-2459" onClick={closeMenu}><Phone size={15} /> (352) 749-2459</a>
-           <a className="button button-small" href="#appointment" onClick={closeMenu}>Let's talk <ArrowUpRight size={16} /></a>
+           <a className="button button-small" href="#appointment" onClick={closeMenu}>Free consultation <ArrowUpRight size={16} /></a>
         </nav>
       </header>
 
@@ -263,7 +263,6 @@ function MarketingSite() {
             <p className="hero-lede">At Overdrive Accounting Services, we champion real results for real achievers. Our holistic approach goes beyond mere number-crunching, aiming to amplify the aspirations of business owners everywhere.</p>
             <div className="hero-actions">
               <a className="button button-accent" href="#appointment">Schedule a free consultation <ArrowUpRight size={18} /></a>
-              <a className="text-link text-link-light" href="#approach"><span className="play-icon"><Play size={11} fill="currentColor" /></span> See how we work</a>
             </div>
             <div className="hero-assurance"><ShieldCheck size={17} /> The accounting partner you deserve</div>
           </div>
@@ -272,10 +271,7 @@ function MarketingSite() {
               <img src={`${assetRoot}2024/06/AboutUS.jpg`} alt="Overdrive team meeting with a business owner" />
               <div className="photo-label"><span>01</span><span className="label-line" /><span>Overdrive Accounting Services</span></div>
             </div>
-            <div className="hero-stat-card"><span className="stat-kicker">Your business, supported</span><strong>15<span>+</span></strong><span>years of strategic experience</span></div>
-            <div className="hero-orbit" aria-hidden="true"><span>O</span></div>
           </div>
-          <div className="hero-scroll"><span>Scroll to explore</span><span className="scroll-line" /></div>
         </section>
 
         <section className="marquee" aria-label="Our capabilities">
@@ -303,7 +299,7 @@ function MarketingSite() {
             {services.map((service) => (
               <a className="service-card" href="#contact" key={service.number}>
                 <div className="service-image"><img src={service.image} alt="" /><span className="service-number">{service.number}</span><span className="service-arrow"><ArrowUpRight size={19} /></span></div>
-                <div className="service-content"><h3>{service.title}</h3>{service.description && <p>{service.description}</p>}<span className="learn-more">Explore service <ArrowUpRight size={15} /></span></div>
+               <div className="service-content"><h3>{service.title}</h3><span className="learn-more">Learn more <ArrowUpRight size={15} /></span></div>
               </a>
             ))}
           </div>
@@ -311,7 +307,7 @@ function MarketingSite() {
         </section>
 
         <section className="partners-section section-pad" aria-labelledby="partners-title">
-          <div className="partners-intro"><div><div className="section-kicker">Highlighted partners <span /></div><h2 id="partners-title">Highlighted <span>partners.</span></h2></div><p>Our clients and partners are an important part of the Overdrive Accounting Services community.</p></div>
+          <div className="partners-intro"><div><div className="section-kicker">Highlighted partners <span /></div><h2 id="partners-title">Highlighted <span>partners.</span></h2></div></div>
           <div className="partner-marquee" aria-label="Overdrive clients and partners"><div className="partner-track">{[...partnerLogos, ...partnerLogos].map((partner, index) => <div className="partner-logo" key={`${partner.name}-${index}`} aria-hidden={index >= partnerLogos.length}><img src={partner.image} alt={index >= partnerLogos.length ? '' : partner.name} loading="lazy" /></div>)}</div></div>
         </section>
 
@@ -324,13 +320,13 @@ function MarketingSite() {
 
         <section className="testimonial-section section-pad">
            <div className="testimonial-top"><div><div className="section-kicker">Our clients say it best <span /></div><h2>Our clients say <span>it best.</span></h2></div><div className="slider-controls"><button onClick={() => setTestimonial((testimonial - 1 + testimonials.length) % testimonials.length)} aria-label="Previous testimonial">←</button><span>0{testimonial + 1} <i>/</i> 0{testimonials.length}</span><button onClick={() => setTestimonial((testimonial + 1) % testimonials.length)} aria-label="Next testimonial">→</button></div></div>
-          <div className="testimonial-viewport" aria-live="polite"><div className="testimonial-track" style={{ transform: `translateX(-${testimonial * 100}%)` }}>{testimonials.map((review) => <div className="testimonial-card" key={review.name}><div className="quote-mark">“</div><blockquote>{review.quote}</blockquote><div className="testimonial-author"><span className="avatar">{review.initials}</span><span><strong>{review.name}</strong><small>{review.role}</small></span></div><div className="google-note"><span className="google-g">G</span> Verified Google review</div></div>)}</div></div>
+           <div className="testimonial-viewport" aria-live="polite"><div className="testimonial-track" style={{ transform: `translateX(-${testimonial * 100}%)` }}>{testimonials.map((review) => <div className="testimonial-card" key={review.name}><div className="quote-mark">“</div><blockquote>{review.quote}</blockquote><div className="testimonial-author"><span className="avatar">{review.initials}</span><span><strong>{review.name}</strong>{review.role && <small>{review.role}</small>}</span></div><div className="google-note"><span className="google-g">G</span> Verified Google review</div></div>)}</div></div>
         </section>
 
           <section className="insights section-pad" id="insights">
            <div className="section-heading-row"><div><div className="section-kicker">Recent blog posts <span /></div><h2>Overdrive Accounting Services <span>blog.</span></h2></div><a className="text-link" href="https://www.irs.gov/newsroom" target="_blank" rel="noreferrer">Follow IRS updates <ArrowUpRight size={17} /></a></div>
            <div className="insight-filters" aria-label="Filter insights">{['All updates', 'Tax & IRS', 'Tax law', 'Accounting', 'Payroll & HR'].map((category) => <button className={insightCategory === category ? 'active' : ''} key={category} onClick={() => setInsightCategory(category)}>{category}</button>)}</div>
-           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date} <span>•</span> {visibleInsights[0].readTime}</div><h3>{visibleInsights[0].title}</h3><p className="insight-summary">{visibleInsights[0].summary}</p><a className="text-link" href={visibleInsights[0].sourceUrl} target={visibleInsights[0].sourceUrl.startsWith('http') ? '_blank' : undefined} rel={visibleInsights[0].sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>{visibleInsights[0].sourceUrl === '#appointment' ? 'Start a conversation' : visibleInsights[0].source === 'Overdrive Accounting Services' ? 'Read article' : `Read source: ${visibleInsights[0].source}`} <ArrowUpRight size={16} /></a></article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">0{index + 1}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3><p>{post.summary}</p><a href={post.sourceUrl} target={post.sourceUrl.startsWith('http') ? '_blank' : undefined} rel={post.sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>Read article <ArrowUpRight size={15} /></a></div></article>)}</div></div>
+           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date}{visibleInsights[0].readTime && <><span>•</span> {visibleInsights[0].readTime}</>}</div><h3>{visibleInsights[0].title}</h3>{visibleInsights[0].summary && <p className="insight-summary">{visibleInsights[0].summary}</p>}<a className="text-link" href={visibleInsights[0].sourceUrl} target={visibleInsights[0].sourceUrl.startsWith('http') ? '_blank' : undefined} rel={visibleInsights[0].sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>{visibleInsights[0].sourceUrl === '#appointment' ? 'Start a conversation' : visibleInsights[0].source === 'Overdrive Accounting Services' ? 'Read article' : `Read source: ${visibleInsights[0].source}`} <ArrowUpRight size={16} /></a></article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">0{index + 1}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3>{post.summary && <p>{post.summary}</p>}<a href={post.sourceUrl} target={post.sourceUrl.startsWith('http') ? '_blank' : undefined} rel={post.sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>Read article <ArrowUpRight size={15} /></a></div></article>)}</div></div>
           </section>
 
          <section className="appointment-section section-pad" id="appointment"><div className="appointment-layout"><div className="appointment-copy"><div className="section-kicker">Start with a conversation <span /></div><h2>Let’s find the <span>right next step.</span></h2><p>Tell us a little about your business and choose a preferred date. Our team will follow up to confirm the conversation.</p><div className="appointment-details"><span>01</span><p>Submit your request</p><span>02</span><p>We confirm the time</p><span>03</span><p>We get to work</p></div></div><div className="appointment-card"><div className="appointment-card-top"><span>Free consultation</span><small>Usually 30 minutes</small></div><AppointmentForm /></div></div></section>
