@@ -2,11 +2,8 @@ import { StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
   ArrowUpRight,
-  BarChart3,
   Check,
   ChevronDown,
-  Clock3,
-  FileCheck2,
   Menu,
   Minus,
   Phone,
@@ -267,7 +264,7 @@ function MarketingSite() {
           <div className="hero-visual">
             <div className="hero-photo-wrap">
               <img src={`${assetRoot}2024/06/AboutUS.jpg`} alt="Overdrive team meeting with a business owner" />
-              <div className="photo-label"><span>01</span><span className="label-line" /><span>Clarity creates action</span></div>
+              <div className="photo-label"><span>01</span><span className="label-line" /><span>Overdrive Accounting Services</span></div>
             </div>
             <div className="hero-stat-card"><span className="stat-kicker">Your business, supported</span><strong>15<span>+</span></strong><span>years of strategic experience</span></div>
             <div className="hero-orbit" aria-hidden="true"><span>O</span></div>
@@ -280,7 +277,7 @@ function MarketingSite() {
         </section>
 
         <section className="intro section-pad" id="about">
-          <div className="section-kicker">A better way forward <span /></div>
+           <div className="section-kicker">The accounting partner you deserve <span /></div>
           <div className="intro-layout">
             <h2>The accounting partner <span>you deserve.</span></h2>
             <div className="intro-body">
@@ -289,23 +286,18 @@ function MarketingSite() {
               <a className="text-link" href="#contact">Get to know Overdrive <ArrowUpRight size={17} /></a>
             </div>
           </div>
-          <div className="metric-row">
-            <div className="metric"><strong>24<span>hr</span></strong><span>Typical response time</span></div>
-            <div className="metric"><strong>360<span>°</span></strong><span>A complete view of your business</span></div>
-            <div className="metric"><strong>1</strong><span>Partner for every stage of growth</span></div>
-          </div>
         </section>
 
         <section className="services-section section-pad" id="services">
           <div className="section-heading-row">
             <div><div className="section-kicker">Services we offer <span /></div><h2>Your premier partner for <span>comprehensive financial solutions.</span></h2></div>
-            <p>Professional and personalized solutions designed to help your business grow and keep your financial operations seamless.</p>
+            <p>Explore our comprehensive suite of financial services designed to drive your business’s success.</p>
           </div>
           <div className="services-grid">
             {services.map((service) => (
               <a className="service-card" href="#contact" key={service.number}>
                 <div className="service-image"><img src={service.image} alt="" /><span className="service-number">{service.number}</span><span className="service-arrow"><ArrowUpRight size={19} /></span></div>
-                <div className="service-content"><h3>{service.title}</h3><p>{service.description}</p><span className="learn-more">Explore service <ArrowUpRight size={15} /></span></div>
+                <div className="service-content"><h3>{service.title}</h3>{service.description && <p>{service.description}</p>}<span className="learn-more">Explore service <ArrowUpRight size={15} /></span></div>
               </a>
             ))}
           </div>
@@ -313,25 +305,24 @@ function MarketingSite() {
         </section>
 
         <section className="partners-section section-pad" aria-labelledby="partners-title">
-          <div className="partners-intro"><div><div className="section-kicker">Highlighted partners <span /></div><h2 id="partners-title">Our clients say <span>it best.</span></h2></div><p>We are proud to support the businesses and owners who trust Overdrive Accounting Services with their financial operations.</p></div>
+          <div className="partners-intro"><div><div className="section-kicker">Highlighted partners <span /></div><h2 id="partners-title">Highlighted <span>partners.</span></h2></div><p>Our clients and partners are an important part of the Overdrive Accounting Services community.</p></div>
           <div className="partner-marquee" aria-label="Overdrive clients and partners"><div className="partner-track">{[...partnerLogos, ...partnerLogos].map((partner, index) => <div className="partner-logo" key={`${partner.name}-${index}`} aria-hidden={index >= partnerLogos.length}><img src={partner.image} alt={index >= partnerLogos.length ? '' : partner.name} loading="lazy" /></div>)}</div></div>
         </section>
 
         <section className="approach section-pad" id="approach">
           <div className="approach-image"><img src={`${assetRoot}2024/06/LoanApplication.jpg`} alt="Business owner reviewing a financial plan" /><div className="image-stamp"><Sparkles size={17} /><span>Strategy<br />in motion</span></div></div>
-          <div className="approach-copy"><div className="section-kicker">Overdrive Accounting Services <span /></div><h2>Professional and <span>personalized solutions.</span></h2><p className="large-copy">From meticulous accounting and bookkeeping to expert payroll management, business advising, business plan creation, and small business funding application assistance, our team is dedicated to delivering professional and personalized solutions.</p>
-            <div className="approach-list"><div><div className="approach-icon"><BarChart3 size={20} /></div><div><h3>See the full picture</h3><p>Financial reporting that turns noise into a clear direction.</p></div></div><div><div className="approach-icon"><FileCheck2 size={20} /></div><div><h3>Stay ahead of the details</h3><p>Proactive support that keeps small issues from becoming big ones.</p></div></div><div><div className="approach-icon"><Clock3 size={20} /></div><div><h3>Make time for growth</h3><p>A trusted team in your corner, ready when you need us.</p></div></div></div>
-            <a className="text-link" href="#contact">Why business owners choose us <ArrowUpRight size={17} /></a>
+          <div className="approach-copy"><div className="section-kicker">Overdrive Accounting Services <span /></div><h2>Comprehensive <span>financial services.</span></h2><p className="large-copy">Overdrive Accounting Services provides a comprehensive suite of financial services designed to drive your business’s success. From meticulous accounting and bookkeeping to expert payroll management, business advising, business plan creation, and small business funding application assistance, our team is dedicated to delivering professional and personalized solutions.</p>
+             <a className="text-link" href="#appointment">Schedule a free consultation <ArrowUpRight size={17} /></a>
           </div>
         </section>
 
         <section className="testimonial-section section-pad">
-          <div className="testimonial-top"><div><div className="section-kicker">Proof in progress <span /></div><h2>Our clients say <span>it best.</span></h2></div><div className="slider-controls"><button onClick={() => setTestimonial((testimonial - 1 + testimonials.length) % testimonials.length)} aria-label="Previous testimonial">←</button><span>0{testimonial + 1} <i>/</i> 0{testimonials.length}</span><button onClick={() => setTestimonial((testimonial + 1) % testimonials.length)} aria-label="Next testimonial">→</button></div></div>
+           <div className="testimonial-top"><div><div className="section-kicker">Our clients say it best <span /></div><h2>Our clients say <span>it best.</span></h2></div><div className="slider-controls"><button onClick={() => setTestimonial((testimonial - 1 + testimonials.length) % testimonials.length)} aria-label="Previous testimonial">←</button><span>0{testimonial + 1} <i>/</i> 0{testimonials.length}</span><button onClick={() => setTestimonial((testimonial + 1) % testimonials.length)} aria-label="Next testimonial">→</button></div></div>
           <div className="testimonial-viewport" aria-live="polite"><div className="testimonial-track" style={{ transform: `translateX(-${testimonial * 100}%)` }}>{testimonials.map((review) => <div className="testimonial-card" key={review.name}><div className="quote-mark">“</div><blockquote>{review.quote}</blockquote><div className="testimonial-author"><span className="avatar">{review.initials}</span><span><strong>{review.name}</strong><small>{review.role}</small></span></div><div className="google-note"><span className="google-g">G</span> Verified Google review</div></div>)}</div></div>
         </section>
 
           <section className="insights section-pad" id="insights">
-           <div className="section-heading-row"><div><div className="section-kicker">From the journal <span /></div><h2>Useful thinking for <span>business owners.</span></h2></div><a className="text-link" href="https://www.irs.gov/newsroom" target="_blank" rel="noreferrer">Follow IRS updates <ArrowUpRight size={17} /></a></div>
+           <div className="section-heading-row"><div><div className="section-kicker">Recent blog posts <span /></div><h2>Overdrive Accounting Services <span>blog.</span></h2></div><a className="text-link" href="https://www.irs.gov/newsroom" target="_blank" rel="noreferrer">Follow IRS updates <ArrowUpRight size={17} /></a></div>
            <div className="insight-filters" aria-label="Filter insights">{['All updates', 'Tax & IRS', 'Tax law', 'Accounting', 'Payroll & HR'].map((category) => <button className={insightCategory === category ? 'active' : ''} key={category} onClick={() => setInsightCategory(category)}>{category}</button>)}</div>
            <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date} <span>•</span> {visibleInsights[0].readTime}</div><h3>{visibleInsights[0].title}</h3><p className="insight-summary">{visibleInsights[0].summary}</p><a className="text-link" href={visibleInsights[0].sourceUrl} target={visibleInsights[0].sourceUrl.startsWith('http') ? '_blank' : undefined} rel={visibleInsights[0].sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>{visibleInsights[0].sourceUrl === '#appointment' ? 'Start a conversation' : visibleInsights[0].source === 'Overdrive Accounting Services' ? 'Read article' : `Read source: ${visibleInsights[0].source}`} <ArrowUpRight size={16} /></a></article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">0{index + 1}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3><p>{post.summary}</p><a href={post.sourceUrl} target={post.sourceUrl.startsWith('http') ? '_blank' : undefined} rel={post.sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>Read article <ArrowUpRight size={15} /></a></div></article>)}</div></div>
           </section>
