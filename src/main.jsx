@@ -114,6 +114,46 @@ const partnerLogos = [
 
 const insights = [
   {
+    category: 'Tax strategy',
+    date: 'April 22, 2025',
+    readTime: '5 min read',
+    title: '2025 Tax Season Checklist: Is Your Business Ready?',
+    summary: 'A practical checklist to help business owners prepare for tax season and keep financial operations on track.',
+    image: `${assetRoot}2024/06/Taxes2.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/2025-tax-season-checklist-is-your-business-ready/',
+  },
+  {
+    category: 'Tax strategy',
+    date: 'March 10, 2025',
+    readTime: '5 min read',
+    title: 'Avoid These Common Tax Filing Mistakes and Save Big This Year',
+    summary: 'The filing mistakes business owners should watch for before submitting their returns.',
+    image: `${assetRoot}2024/06/Taxes2.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/avoid-these-common-tax-filing-mistakes-and-save-big-this-year/',
+  },
+  {
+    category: 'Business growth',
+    date: 'February 10, 2025',
+    readTime: '5 min read',
+    title: 'Top Tax Deductions Every Small Business Should Know for 2025',
+    summary: 'A helpful look at deductions small business owners should discuss with their accounting partner.',
+    image: `${assetRoot}2024/06/Accounting.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/top-tax-deductions-every-small-business-should-know-for-2025/',
+  },
+  {
+    category: 'Payroll & HR',
+    date: 'January 13, 2025',
+    readTime: '4 min read',
+    title: 'From Payroll to Taxes: How We Handle It All',
+    summary: 'How Overdrive helps businesses coordinate payroll, tax preparation, and financial operations.',
+    image: `${assetRoot}2024/06/PayrollManagement.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/from-payroll-to-taxes-how-we-handle-it-all/',
+  },
+  {
     category: 'Tax & IRS',
     date: 'September 4, 2026',
     readTime: '4 min read',
@@ -214,14 +254,14 @@ function MarketingSite() {
         <section className="hero">
           <div className="hero-gridlines" aria-hidden="true" />
           <div className="hero-copy">
-            <div className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> Strategic finance for ambitious owners</div>
-            <h1>Turn your numbers into <em>momentum.</em></h1>
-            <p className="hero-lede">Accounting should do more than keep up. Overdrive gives you the clarity, strategy, and support to move your business forward with confidence.</p>
+            <div className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> Overdrive Accounting Services</div>
+            <h1>Push your business into <em>overdrive.</em></h1>
+            <p className="hero-lede">At Overdrive Accounting Services, we champion real results for real achievers. Our holistic approach goes beyond mere number-crunching, aiming to amplify the aspirations of business owners everywhere.</p>
             <div className="hero-actions">
               <a className="button button-accent" href="#appointment">Schedule a free consultation <ArrowUpRight size={18} /></a>
               <a className="text-link text-link-light" href="#approach"><span className="play-icon"><Play size={11} fill="currentColor" /></span> See how we work</a>
             </div>
-            <div className="hero-assurance"><ShieldCheck size={17} /> Trusted financial guidance for businesses at every stage</div>
+            <div className="hero-assurance"><ShieldCheck size={17} /> The accounting partner you deserve</div>
           </div>
           <div className="hero-visual">
             <div className="hero-photo-wrap">
@@ -243,8 +283,8 @@ function MarketingSite() {
           <div className="intro-layout">
             <h2>The accounting partner <span>you deserve.</span></h2>
             <div className="intro-body">
-              <p>Numbers tell a story. Our job is to make sure it is one you can act on.</p>
-              <p>Overdrive Accounting Services brings together meticulous financial management and practical business insight. We make the complicated feel clear, so you can spend less time chasing answers and more time building what is next.</p>
+              <p>At Overdrive Accounting Services, we champion real results for real achievers.</p>
+              <p>As you navigate the evolving landscape of business, let our team be your guiding star, bringing experience, strategy, and unparalleled expertise to your journey.</p>
               <a className="text-link" href="#contact">Get to know Overdrive <ArrowUpRight size={17} /></a>
             </div>
           </div>
@@ -257,8 +297,8 @@ function MarketingSite() {
 
         <section className="services-section section-pad" id="services">
           <div className="section-heading-row">
-            <div><div className="section-kicker">What we do <span /></div><h2>Built around <span>your next move.</span></h2></div>
-            <p>From day-to-day books to big-picture decisions, our services work together to keep your business in motion.</p>
+            <div><div className="section-kicker">Services we offer <span /></div><h2>Your premier partner for <span>comprehensive financial solutions.</span></h2></div>
+            <p>Professional and personalized solutions designed to help your business grow and keep your financial operations seamless.</p>
           </div>
           <div className="services-grid">
             {services.map((service) => (
@@ -272,13 +312,13 @@ function MarketingSite() {
         </section>
 
         <section className="partners-section section-pad" aria-labelledby="partners-title">
-          <div className="partners-intro"><div><div className="section-kicker">A growing community <span /></div><h2 id="partners-title">Built with businesses <span>like yours.</span></h2></div><p>From local teams to growing companies, we are proud to be the financial partner behind the work that keeps Central Florida moving.</p></div>
+          <div className="partners-intro"><div><div className="section-kicker">Highlighted partners <span /></div><h2 id="partners-title">Our clients say <span>it best.</span></h2></div><p>We are proud to support the businesses and owners who trust Overdrive Accounting Services with their financial operations.</p></div>
           <div className="partner-marquee" aria-label="Overdrive clients and partners"><div className="partner-track">{[...partnerLogos, ...partnerLogos].map((partner, index) => <div className="partner-logo" key={`${partner.name}-${index}`} aria-hidden={index >= partnerLogos.length}><img src={partner.image} alt={index >= partnerLogos.length ? '' : partner.name} loading="lazy" /></div>)}</div></div>
         </section>
 
         <section className="approach section-pad" id="approach">
           <div className="approach-image"><img src={`${assetRoot}2024/06/LoanApplication.jpg`} alt="Business owner reviewing a financial plan" /><div className="image-stamp"><Sparkles size={17} /><span>Strategy<br />in motion</span></div></div>
-          <div className="approach-copy"><div className="section-kicker">The Overdrive difference <span /></div><h2>Clear numbers. <span>Confident decisions.</span></h2><p className="large-copy">We are not just here to report on what happened. We help you understand what is possible, then build the financial foundation to get there.</p>
+          <div className="approach-copy"><div className="section-kicker">Overdrive Accounting Services <span /></div><h2>Professional and <span>personalized solutions.</span></h2><p className="large-copy">From meticulous accounting and bookkeeping to expert payroll management, business advising, business plan creation, and small business funding application assistance, our team is dedicated to delivering professional and personalized solutions.</p>
             <div className="approach-list"><div><div className="approach-icon"><BarChart3 size={20} /></div><div><h3>See the full picture</h3><p>Financial reporting that turns noise into a clear direction.</p></div></div><div><div className="approach-icon"><FileCheck2 size={20} /></div><div><h3>Stay ahead of the details</h3><p>Proactive support that keeps small issues from becoming big ones.</p></div></div><div><div className="approach-icon"><Clock3 size={20} /></div><div><h3>Make time for growth</h3><p>A trusted team in your corner, ready when you need us.</p></div></div></div>
             <a className="text-link" href="#contact">Why business owners choose us <ArrowUpRight size={17} /></a>
           </div>
@@ -292,12 +332,12 @@ function MarketingSite() {
           <section className="insights section-pad" id="insights">
            <div className="section-heading-row"><div><div className="section-kicker">From the journal <span /></div><h2>Useful thinking for <span>business owners.</span></h2></div><a className="text-link" href="https://www.irs.gov/newsroom" target="_blank" rel="noreferrer">Follow IRS updates <ArrowUpRight size={17} /></a></div>
            <div className="insight-filters" aria-label="Filter insights">{['All updates', 'Tax & IRS', 'Tax law', 'Accounting', 'Payroll & HR'].map((category) => <button className={insightCategory === category ? 'active' : ''} key={category} onClick={() => setInsightCategory(category)}>{category}</button>)}</div>
-           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date} <span>•</span> {visibleInsights[0].readTime}</div><h3>{visibleInsights[0].title}</h3><p className="insight-summary">{visibleInsights[0].summary}</p><a className="text-link" href={visibleInsights[0].sourceUrl} target={visibleInsights[0].sourceUrl.startsWith('http') ? '_blank' : undefined} rel={visibleInsights[0].sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>{visibleInsights[0].source === 'Overdrive Accounting Services' ? 'Start a conversation' : `Read source: ${visibleInsights[0].source}`} <ArrowUpRight size={16} /></a></article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">0{index + 1}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3><p>{post.summary}</p><a href={post.sourceUrl} target={post.sourceUrl.startsWith('http') ? '_blank' : undefined} rel={post.sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>Read update <ArrowUpRight size={15} /></a></div></article>)}</div></div>
+           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date} <span>•</span> {visibleInsights[0].readTime}</div><h3>{visibleInsights[0].title}</h3><p className="insight-summary">{visibleInsights[0].summary}</p><a className="text-link" href={visibleInsights[0].sourceUrl} target={visibleInsights[0].sourceUrl.startsWith('http') ? '_blank' : undefined} rel={visibleInsights[0].sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>{visibleInsights[0].sourceUrl === '#appointment' ? 'Start a conversation' : visibleInsights[0].source === 'Overdrive Accounting Services' ? 'Read article' : `Read source: ${visibleInsights[0].source}`} <ArrowUpRight size={16} /></a></article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">0{index + 1}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3><p>{post.summary}</p><a href={post.sourceUrl} target={post.sourceUrl.startsWith('http') ? '_blank' : undefined} rel={post.sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>Read article <ArrowUpRight size={15} /></a></div></article>)}</div></div>
           </section>
 
          <section className="appointment-section section-pad" id="appointment"><div className="appointment-layout"><div className="appointment-copy"><div className="section-kicker">Start with a conversation <span /></div><h2>Let’s find the <span>right next step.</span></h2><p>Tell us a little about your business and choose a preferred date. Our team will follow up to confirm the conversation.</p><div className="appointment-details"><span>01</span><p>Submit your request</p><span>02</span><p>We confirm the time</p><span>03</span><p>We get to work</p></div></div><div className="appointment-card"><div className="appointment-card-top"><span>Free consultation</span><small>Usually 30 minutes</small></div><AppointmentForm /></div></div></section>
 
-         <section className="contact-section" id="contact"><div className="contact-bg-word">OVERDRIVE</div><div className="contact-inner"><div className="section-kicker eyebrow-light">Ready when you are <span /></div><h2>Let’s put your business <em>in motion.</em></h2><p>Tell us where you are headed. We’ll help you build the financial clarity to get there.</p><a className="button button-accent" href="mailto:Info@OverdriveAccountingServices.com">Start a conversation <ArrowUpRight size={18} /></a></div><div className="contact-curve" /></section>
+         <section className="contact-section" id="contact"><div className="contact-bg-word">OVERDRIVE</div><div className="contact-inner"><div className="section-kicker eyebrow-light">Ready to get started <span /></div><h2>Ready to push your business into <em>overdrive?</em></h2><p>Schedule a free consultation and discover how Overdrive Accounting Services can elevate your business to new heights.</p><a className="button button-accent" href="#appointment">Schedule a free consultation <ArrowUpRight size={18} /></a></div><div className="contact-curve" /></section>
       </main>
 
       <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href="/portal">Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
