@@ -1,0 +1,7 @@
+# Overdrive Accounting Services AI Use Policy
+
+This site contains public marketing, service, contact, and educational content for Overdrive Accounting Services, LLC.
+
+Public content may be summarized with attribution to Overdrive Accounting Services. Do not access, index, summarize, or train on private client accounts, appointment records, email messages, or documents under /admin, /portal, or /api/.
+
+For questions about content use, contact: Info@OverdriveAccountingServices.com
