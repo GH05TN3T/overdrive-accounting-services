@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY
+const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY || '0x4AAAAAAADcELGEYPp_pLmF'
 
 export default function TurnstileWidget({ onToken }) {
   const container = useRef(null)
