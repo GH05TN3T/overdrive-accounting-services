@@ -65,7 +65,8 @@ h1 em, h2 span { color: var(--orange); font-family: 'Playfair Display', serif; f
 .hero-scroll { align-items: center; bottom: 36px; color: rgba(255,255,255,.4); display: flex; font-family: 'DM Mono', monospace; font-size: 9px; gap: 12px; left: clamp(24px, 9vw, 148px); letter-spacing: .12em; position: absolute; text-transform: uppercase; transform: rotate(-90deg); transform-origin: left center; }
 .scroll-line { background: var(--orange); height: 1px; width: 43px; }
 .marquee { background: var(--orange); color: var(--ink); overflow: hidden; padding: 18px 0; }
-.marquee-track { align-items: center; animation: marquee 24s linear infinite; display: flex; font-family: 'DM Mono', monospace; font-size: 11px; gap: 31px; letter-spacing: .19em; min-width: max-content; white-space: nowrap; }
+.marquee-track { align-items: center; animation: marquee 24s linear infinite; display: flex; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .19em; min-width: max-content; white-space: nowrap; }
+.marquee-group { align-items: center; display: flex; flex: 0 0 auto; gap: 31px; }
 .marquee-track svg { height: 14px; width: 14px; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 .section-pad { padding: 126px clamp(24px, 9vw, 148px); }

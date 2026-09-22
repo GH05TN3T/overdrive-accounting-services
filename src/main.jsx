@@ -275,7 +275,7 @@ function MarketingSite() {
         </section>
 
         <section className="marquee" aria-label="Our capabilities">
-          <div className="marquee-track"><span>ACCOUNTING</span><Minus /><span>STRATEGY</span><Minus /><span>GROWTH</span><Minus /><span>ACCOUNTING</span><Minus /><span>STRATEGY</span><Minus /><span>GROWTH</span></div>
+           <div className="marquee-track"><div className="marquee-group"><span>ACCOUNTING</span><Minus /><span>STRATEGY</span><Minus /><span>GROWTH</span></div><div className="marquee-group" aria-hidden="true"><span>ACCOUNTING</span><Minus /><span>STRATEGY</span><Minus /><span>GROWTH</span></div></div>
         </section>
 
         <section className="intro section-pad" id="about">
