@@ -187,6 +187,7 @@ async function handleApi(request, env) {
   if (path === '/api/client/register' && method === 'POST') {
     if (!env.DB || !env.CLIENT_SESSION_SECRET) return json({ error: 'Client account storage is not configured in Cloudflare.' }, 503)
     const body = await request.json()
+    if (!await verifyTurnstile(request, env, body.turnstile_token)) return json({ error: 'Complete the security check and try again.' }, 400)
     const email = (body.email || '').trim().toLowerCase()
     if (!email || !body.password || !body.name) return json({ error: 'Name, email, and password are required.' }, 400)
     if (body.password.length < 8) return json({ error: 'Password must be at least 8 characters.' }, 400)
@@ -202,6 +203,7 @@ async function handleApi(request, env) {
   if (path === '/api/client/login' && method === 'POST') {
     if (!env.DB || !env.CLIENT_SESSION_SECRET) return json({ error: 'Client account storage is not configured in Cloudflare.' }, 503)
     const body = await request.json()
+    if (!await verifyTurnstile(request, env, body.turnstile_token)) return json({ error: 'Complete the security check and try again.' }, 400)
     const email = (body.email || '').trim().toLowerCase()
     const user = await env.DB.prepare('SELECT email, password_hash FROM client_users WHERE email = ?').bind(email).first()
     if (!user || !await verifyPassword(body.password || '', user.password_hash)) return json({ error: 'Invalid email or password.' }, 401)
