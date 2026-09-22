@@ -91,6 +91,12 @@ const testimonials = [
     role: 'Business owner',
     initials: 'AC',
   },
+  {
+    quote: 'Business solutions tax preparation has qualified professionals. They always get back within 24 hours. The company is diversified and does more than just taxes; they do all small or large business needs.',
+    name: 'Sullivan Plumbing LLC',
+    role: 'Overdrive client',
+    initials: 'SP',
+  },
 ]
 
 const partnerLogos = [
