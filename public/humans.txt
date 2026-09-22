@@ -1,0 +1,12 @@
+/* TEAM */
+Developer: Edgar Rosario
+Known as: Ghostnet
+Project: Overdrive Accounting Services demo
+
+/* SITE */
+Website: https://overdriveaccountingservices.com/
+Technology: React, Vite, Cloudflare Workers, D1, R2
+Brand owner: Overdrive Accounting Services, LLC
+
+/* THANKS */
+Original business content and brand assets: Overdrive Accounting Services, LLC
