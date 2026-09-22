@@ -1,6 +1,6 @@
 import PostalMime from 'postal-mime'
 
-const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } })
 
 function accessEmail(request) {
   return (request.headers.get('CF-Access-Authenticated-User-Email') || '').trim().toLowerCase()
@@ -116,7 +116,10 @@ function missingBindings(env) {
 }
 
 async function verifyTurnstile(request, env, token) {
-  if (!env.TURNSTILE_SECRET_KEY) return true
+  if (!env.TURNSTILE_SECRET_KEY) {
+    const hostname = new URL(request.url).hostname
+    return hostname === 'localhost' || hostname === '127.0.0.1'
+  }
   if (!token) return false
   const form = new FormData()
   form.append('secret', env.TURNSTILE_SECRET_KEY)
@@ -130,6 +133,11 @@ async function verifyTurnstile(request, env, token) {
 
 function safeFileName(name) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 150)
+}
+
+function sameOrigin(request) {
+  const origin = request.headers.get('Origin')
+  return !origin || origin === new URL(request.url).origin
 }
 
 async function ensureClient(env, email, name = '', business = '') {
@@ -334,6 +342,9 @@ async function handleApi(request, env) {
     if (!(file instanceof File) || !file.size) return json({ error: 'Choose a file to upload.' }, 400)
     if (file.size > 25 * 1024 * 1024) return json({ error: 'Files must be smaller than 25 MB.' }, 400)
     const fileName = safeFileName(file.name)
+    const extension = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : ''
+    const allowedExtensions = new Set(['pdf', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'txt', 'csv', 'doc', 'docx', 'xls', 'xlsx'])
+    if (!allowedExtensions.has(extension)) return json({ error: 'This file type is not allowed.' }, 415)
     const storagePath = `${clientEmail}/${crypto.randomUUID()}-${fileName}`
     await env.DOCUMENTS.put(storagePath, file.stream(), { httpMetadata: { contentType: file.type || 'application/octet-stream' } })
     const id = crypto.randomUUID()
@@ -376,6 +387,8 @@ async function handleApi(request, env) {
     const previewable = /\.(pdf|png|jpe?g|gif|webp|txt|csv)$/i.test(document.file_name)
     const disposition = url.searchParams.get('download') === '1' || !previewable ? 'attachment' : 'inline'
     headers.set('Content-Disposition', `${disposition}; filename="${safeFileName(document.file_name)}"`)
+    headers.set('Cache-Control', 'private, no-store')
+    headers.set('X-Content-Type-Options', 'nosniff')
     return new Response(object.body, { headers })
   }
 
@@ -395,8 +408,17 @@ async function handleApi(request, env) {
 export default {
   async fetch(request, env) {
     try {
-      if (new URL(request.url).pathname.startsWith('/api/')) return await handleApi(request, env)
-      return env.ASSETS.fetch(request)
+      const url = new URL(request.url)
+      if (['POST', 'PATCH', 'DELETE'].includes(request.method) && !sameOrigin(request)) return json({ error: 'Cross-origin request blocked.' }, 403)
+      if (url.pathname.startsWith('/api/')) return await handleApi(request, env)
+      const response = await env.ASSETS.fetch(request)
+      const headers = new Headers(response.headers)
+      headers.set('X-Content-Type-Options', 'nosniff')
+      headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+      headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+      headers.set('X-Frame-Options', 'DENY')
+      headers.set('Content-Security-Policy', "default-src 'self'; img-src 'self' data: https://overdriveaccountingservices.com https://lh3.googleusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'")
+      return new Response(response.body, { status: response.status, statusText: response.statusText, headers })
     } catch (error) {
       return json({ error: error.message || 'Unexpected server error.' }, 500)
     }

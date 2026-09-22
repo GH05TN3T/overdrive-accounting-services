@@ -80,6 +80,14 @@ Verify the domain in Resend and create a Cloudflare Email Routing rule for `Info
 
 The public appointment form writes to D1. Client documents are stored in the private R2 bucket. Staff use `/admin` to review appointments, change status, and manage documents. The dashboard polls for updates every 30 seconds and also has a manual refresh action.
 
+## Security controls
+
+- Turnstile is fail-closed in production when `TURNSTILE_SECRET_KEY` is missing.
+- Worker rejects cross-origin state-changing API requests.
+- Uploads are limited to approved document extensions and 25 MB.
+- Private document responses use no-cache and `nosniff` headers.
+- Add Cloudflare Rate Limiting rules for `/api/admin/login`, `/api/client/login`, `/api/client/register`, and `/api/appointments`.
+
 ## Cloudflare Pages
 
 - Build command: `pnpm build`
