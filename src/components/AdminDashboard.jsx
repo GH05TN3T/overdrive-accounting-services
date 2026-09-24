@@ -75,9 +75,10 @@ export default function AdminDashboard() {
     event.preventDefault()
     setSavingMeeting(true)
     try {
-      await apiRequest(`/api/admin/appointments/${selectedAppointment.id}`, { method: 'PATCH', body: JSON.stringify(meetingForm) })
+      const result = await apiRequest(`/api/admin/appointments/${selectedAppointment.id}`, { method: 'PATCH', body: JSON.stringify(meetingForm) })
       setAppointments((current) => current.map((appointment) => appointment.id === selectedAppointment.id ? { ...appointment, ...meetingForm } : appointment))
       setSelectedAppointment(null)
+      if (result.email_sent === false) setState((current) => ({ ...current, error: `Appointment saved, but the client email was not sent: ${result.email_error}` }))
     } catch (error) { setState((current) => ({ ...current, error: error.message })) }
     setSavingMeeting(false)
   }

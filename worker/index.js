@@ -148,6 +148,28 @@ async function sendEmailWithResend(env, email, subject, text) {
   return { id: data.id || '' }
 }
 
+async function notifyAppointmentUpdate(env, appointment) {
+  const statusLabel = appointment.status === 'cancelled' ? 'cancelled' : appointment.status === 'completed' ? 'completed' : 'scheduled'
+  const subject = appointment.status === 'cancelled' ? 'Update to your Overdrive consultation' : 'Your Overdrive consultation details'
+  const lines = [
+    `Hello ${appointment.name || 'there'},`,
+    '',
+    `Your Overdrive Accounting Services consultation is ${statusLabel}.`,
+    `Date: ${appointment.appointment_date || 'To be confirmed'}`,
+    `Time: ${appointment.appointment_time || 'To be confirmed'}`,
+  ]
+  if (appointment.meeting_url) lines.push(`Meeting link: ${appointment.meeting_url}`)
+  if (appointment.meeting_notes) lines.push('', `Notes: ${appointment.meeting_notes}`)
+  if (appointment.cancellation_reason) lines.push('', `Cancellation reason: ${appointment.cancellation_reason}`)
+  lines.push('', 'Overdrive Accounting Services', 'Info@OverdriveAccountingServices.com', '(352) 749-2459')
+  const sent = await sendEmailWithResend(env, appointment.email, subject, lines.join('\n'))
+  if (sent.error) return { sent: false, error: sent.error }
+  try {
+    await env.DB.prepare('INSERT INTO email_messages (id, client_email, direction, subject, body_text, provider_id, is_read) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), appointment.email, 'outbound', subject, lines.join('\n'), sent.id, 1).run()
+  } catch { /* Messaging migration may not be installed yet. */ }
+  return { sent: true }
+}
+
 async function handleInboundEmail(message, env) {
   if (!env.DB) throw new Error('D1 binding DB is not configured.')
   const parsed = await new PostalMime().parse(await new Response(message.raw).arrayBuffer())
@@ -289,7 +311,7 @@ async function handleApi(request, env) {
       updates.push('status = ?')
       values.push(body.status)
     }
-    for (const field of ['appointment_time', 'meeting_url', 'meeting_notes', 'cancellation_reason']) {
+    for (const field of ['appointment_date', 'appointment_time', 'meeting_url', 'meeting_notes', 'cancellation_reason']) {
       if (body[field] !== undefined) {
         updates.push(`${field} = ?`)
         values.push(String(body[field] || '').trim())
@@ -299,7 +321,9 @@ async function handleApi(request, env) {
     updates.push("updated_at = datetime('now')")
     values.push(appointmentMatch[1])
     await env.DB.prepare(`UPDATE appointments SET ${updates.join(', ')} WHERE id = ?`).bind(...values).run()
-    return json({ ok: true })
+    const appointment = await env.DB.prepare('SELECT * FROM appointments WHERE id = ?').bind(appointmentMatch[1]).first()
+    const emailResult = body.notify_client === false ? { sent: true } : await notifyAppointmentUpdate(env, appointment)
+    return json({ ok: true, email_sent: emailResult.sent, email_error: emailResult.error || '' })
   }
 
   if (appointmentMatch && method === 'DELETE') {
