@@ -28,48 +28,56 @@ const services = [
     number: '01',
     title: 'Accounting & bookkeeping',
     description: '',
+    details: 'At Overdrive Accounting Services, we specialize in delivering precise and comprehensive accounting and bookkeeping services tailored to the unique needs of each client. Our dedicated team of accounting professionals is committed to ensuring the financial accuracy and compliance of your business. Whether you’re a small startup or a growing enterprise, our services are designed to keep your financial records impeccable and up-to-date. From daily transactions to complex financial reporting, we manage all aspects of accounting and bookkeeping with utmost professionalism, enabling you to focus on core business activities without the hassle of financial management.',
     image: `${assetRoot}2024/06/Accounting.jpg`,
   },
   {
     number: '02',
     title: 'Tax preparation & filing',
     description: '',
+    details: 'At Overdrive Accounting Services, we specialize in providing top-tier tax preparation and filing services exclusively for businesses. Understanding the complexities of business tax obligations, we focus solely on corporate clients to deliver precise and strategic tax solutions that align with your company’s needs. Whether you are a small startup or a well-established enterprise, our expert team is equipped to handle all aspects of business tax preparation, ensuring that your filings are accurate, timely, and optimized for the best possible tax advantages. By staying abreast of the latest tax laws and regulations, we guarantee compliance and work diligently to maximize your deductions and credits.',
     image: `${assetRoot}2024/06/Taxes2.jpg`,
   },
   {
     number: '03',
     title: 'Payroll management',
     description: '',
+    details: 'At Overdrive Accounting Services, we take the complexity out of payroll management with our comprehensive services designed to ensure accuracy and compliance with all applicable laws and regulations. Our professional payroll team is dedicated to managing every aspect of your payroll process, from the initial setup to the regular processing of payments, handling of deductions, and filing of necessary payroll taxes. We cater to businesses of all sizes, providing a scalable solution that grows with your company. By outsourcing your payroll to us, you can focus more on running your business while we handle the intricacies of payroll administration.',
     image: `${assetRoot}2024/06/PayrollManagement.jpg`,
   },
   {
     number: '04',
     title: 'Fractional CFO',
     description: '',
+    details: 'At Overdrive Accounting Services, we understand that not every business is ready for a full-time Chief Financial Officer, but every business deserves world-class financial leadership. Our Fractional CFO service gives you access to senior-level financial expertise on a flexible, cost-effective basis, so you can make smarter decisions, plan for growth, and protect your bottom line without the overhead of a full-time executive hire. Whether you’re navigating rapid growth, preparing for investment, or simply trying to get a firmer grip on your financial future, our Fractional CFO team brings the strategy, insight, and experience your business needs to push into overdrive.',
     image: `${assetRoot}2026/05/3501.jpg`,
   },
   {
     number: '05',
     title: 'Small business lending',
     description: '',
+    details: 'Navigating the complexities of small business lending can be daunting, but with Overdrive Accounting Services, securing the necessary funding for your business is made simpler and more straightforward. We specialize in assisting small to medium-sized enterprises in obtaining loans by preparing and presenting strong, compelling loan applications. Our team works closely with you to understand your business needs and financial situation, helping to match you with the most suitable lenders and financing options. We manage the entire process, from the initial documentation to the final submission, ensuring that your application stands out and meets all lender requirements.',
     image: `${assetRoot}2024/06/LoanApplication.jpg`,
   },
   {
     number: '06',
     title: 'Benefits administration',
     description: '',
+    details: 'Offering competitive employee benefits is one of the most powerful tools a business has for attracting and keeping great talent, but managing those benefits can quickly become overwhelming without the right support. Overdrive Accounting Services takes the complexity out of benefits administration, handling the details so you can focus on running your business and rewarding your team. We work with you to design a benefits package that reflects your values as an employer while staying within your budget, ensuring your employees feel valued, protected, and supported at every stage of their careers.',
     image: `${assetRoot}2026/05/953.jpg`,
   },
   {
     number: '07',
     title: 'Business insurance management',
     description: '',
+    details: 'Running a business means managing risk and having the right insurance coverage is one of the most critical steps you can take to protect everything you’ve built. At Overdrive Accounting Services, we help business owners identify their exposures, understand their coverage options, and implement an insurance strategy that provides comprehensive protection without unnecessary cost. We take a holistic view of your business’s risk profile and work with trusted insurance partners to ensure you’re covered where it counts, so you can operate with confidence knowing your assets, employees, and reputation are protected.',
     image: `${assetRoot}2026/05/3822.jpg`,
   },
   {
     number: '08',
     title: 'Human resources',
     description: '',
+    details: 'Your people are your most valuable asset, and managing them well requires more than good intentions, it requires the right systems, policies, and compliance frameworks. Overdrive Accounting Services offers comprehensive Human Resources support designed to help business owners build strong teams, stay compliant, and create a workplace culture that attracts and retains top talent. From the moment an employee joins your team to their day-to-day experience on the job, our HR services ensure every touchpoint is handled with professionalism and care, giving you the freedom to focus on leading your business.',
     image: `${assetRoot}2026/05/4691.jpg`,
   },
 ]
@@ -346,6 +354,7 @@ function MarketingSite() {
   const [selectedBlog, setSelectedBlog] = useState(null)
   const [blogLoading, setBlogLoading] = useState(false)
   const [blogError, setBlogError] = useState('')
+  const [selectedService, setSelectedService] = useState(null)
 
   useEffect(() => {
     const rotation = setInterval(() => {
@@ -430,7 +439,7 @@ function MarketingSite() {
           </div>
           <div className="services-grid">
             {services.map((service) => (
-              <a className="service-card" href="#contact" key={service.number}>
+                <a className="service-card" href="#services" onClick={(event) => { event.preventDefault(); setSelectedService(service) }} key={service.number}>
                 <div className="service-image"><img src={service.image} alt="" /><span className="service-number">{service.number}</span><span className="service-arrow"><ArrowUpRight size={19} /></span></div>
                <div className="service-content"><h3>{service.title}</h3><span className="learn-more">Learn more <ArrowUpRight size={15} /></span></div>
               </a>
@@ -468,6 +477,7 @@ function MarketingSite() {
          {blogLoading && <div className="blog-loading">Loading article...</div>}
          {blogError && <div className="blog-error">{blogError}</div>}
          {selectedBlog && <BlogModal article={selectedBlog} onClose={() => setSelectedBlog(null)} />}
+         {selectedService && <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />}
       </main>
 
       <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href={clientPortalUrl}>Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
@@ -508,6 +518,10 @@ function PortalRedirect() {
 
 function BlogModal({ article, onClose }) {
   return <div className="blog-modal-backdrop" onMouseDown={onClose}><article className="blog-modal" onMouseDown={(event) => event.stopPropagation()}><button className="blog-modal-close" onClick={onClose} aria-label="Close article">X</button><span className="section-kicker">Overdrive Accounting Services Blog <span /></span><h2>{article.title}</h2><div className="blog-modal-date">{new Date(article.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div><div className="blog-modal-content" dangerouslySetInnerHTML={{ __html: article.content }} /></article></div>
+}
+
+function ServiceModal({ service, onClose }) {
+  return <div className="blog-modal-backdrop" onMouseDown={onClose}><article className="service-modal" onMouseDown={(event) => event.stopPropagation()}><button className="blog-modal-close" onClick={onClose} aria-label="Close service details">X</button><div className="service-modal-image"><img src={service.image} alt="" /></div><span className="section-kicker">Services we offer <span /></span><h2>{service.title}</h2><p>{service.details}</p><a className="button button-accent" href="#appointment" onClick={onClose}>Schedule a free consultation <ArrowUpRight size={17} /></a></article></div>
 }
 
 createRoot(document.getElementById('root')).render(<StrictMode><App /></StrictMode>)
