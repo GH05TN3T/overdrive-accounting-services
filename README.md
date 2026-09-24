@@ -82,7 +82,7 @@ Admins can upload tax, payroll, accounting, or other files as drafts and publish
 npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migrations/0006_client_crm.sql
 ```
 
-The client workspace includes overview metrics, documents, appointments, secure messages, tax checklist, profile settings, and notifications based on unread activity.
+The public Client portal link points to the existing SecureFilePro portal. The internal CRM tools remain available to staff under `/admin`.
 
 Verify the domain in Resend and create a Cloudflare Email Routing rule for `Info@OverdriveAccountingServices.com` that sends to this Worker. Incoming messages are stored in D1 and appear under **Clients & inbox**. Outbound messages are sent through Resend.
 

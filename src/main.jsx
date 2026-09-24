@@ -14,11 +14,11 @@ import {
 } from 'lucide-react'
 import AdminDashboard from './components/AdminDashboard'
 import AppointmentForm from './components/AppointmentForm'
-import ClientPortal from './components/ClientPortal'
 import './styles.css'
 import './portal.css'
 
 const siteLogo = 'https://overdriveaccountingservices.com/wp-content/uploads/2024/05/WebLogo_White.png'
+const clientPortalUrl = 'https://overdriveaccountingservices.securefilepro.com/portal/#/login'
 const assetRoot = 'https://overdriveaccountingservices.com/wp-content/uploads/'
 
 const services = [
@@ -248,7 +248,7 @@ function MarketingSite() {
           <a className="nav-link" href="#insights" onClick={closeMenu}>Resources</a>
           <a className="nav-link" href="#about" onClick={closeMenu}>About us</a>
           <a className="nav-link" href="#insights" onClick={closeMenu}>Insights</a>
-          <a className="nav-link nav-portal" href="/portal" onClick={closeMenu}><span className="nav-portal-pulse" /> Client portal <ArrowUpRight size={14} /></a>
+          <a className="nav-link nav-portal" href={clientPortalUrl} onClick={closeMenu}><span className="nav-portal-pulse" /> Client portal <ArrowUpRight size={14} /></a>
           <a className="nav-phone" href="tel:352-749-2459" onClick={closeMenu}><Phone size={15} /> (352) 749-2459</a>
            <a className="button button-small" href="#appointment" onClick={closeMenu}>Free consultation <ArrowUpRight size={16} /></a>
         </nav>
@@ -334,7 +334,7 @@ function MarketingSite() {
          <section className="contact-section" id="contact"><div className="contact-bg-word">OVERDRIVE</div><div className="contact-inner"><div className="section-kicker eyebrow-light">Ready to get started <span /></div><h2>Ready to push your business into <em>overdrive?</em></h2><p>Schedule a free consultation and discover how Overdrive Accounting Services can elevate your business to new heights.</p><a className="button button-accent" href="#appointment">Schedule a free consultation <ArrowUpRight size={18} /></a></div><div className="contact-curve" /></section>
       </main>
 
-      <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href="/portal">Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
+      <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href={clientPortalUrl}>Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
     </div>
   )
 }
@@ -342,8 +342,13 @@ function MarketingSite() {
 function App() {
   const route = window.location.pathname.replace(/\/+$/, '') || '/'
   if (route === '/admin') return <AdminDashboard />
-  if (route === '/portal') return <ClientPortal />
+  if (route === '/portal') return <PortalRedirect />
   return <MarketingSite />
+}
+
+function PortalRedirect() {
+  useEffect(() => { window.location.replace(clientPortalUrl) }, [])
+  return <div className="portal-page"><main className="portal-content"><p>Redirecting to the secure client portal...</p></main></div>
 }
 
 createRoot(document.getElementById('root')).render(<StrictMode><App /></StrictMode>)
