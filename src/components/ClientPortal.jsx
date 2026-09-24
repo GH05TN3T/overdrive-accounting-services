@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowUpRight, Download, Eye, FileText, LoaderCircle, LogOut, UploadCloud } from 'lucide-react'
 import { apiRequest } from '../lib/api'
+import ClientWorkspace from './ClientWorkspace'
 import TurnstileWidget from './TurnstileWidget'
 
 const emptyAuth = { name: '', business: '', email: '', password: '' }
@@ -82,7 +83,7 @@ export default function ClientPortal() {
   if (!state.configured) return <div className="portal-page"><PortalHeader /><main className="portal-content"><CloudflareSetup message={state.error} /></main></div>
   if (!session?.authenticated) return <div className="portal-page"><PortalHeader /><main className="portal-content"><ClientAuth mode={mode} setMode={setMode} form={authForm} setForm={setAuthForm} error={state.error} onSubmit={submitAuth} onToken={setTurnstileToken} /></main></div>
 
-  return <div className="portal-page"><PortalHeader session={session} onSignOut={async () => { await apiRequest('/api/client/logout', { method: 'POST' }); window.location.reload() }} /><main className="portal-content"><div className="portal-title"><div><span className="portal-eyebrow">Client portal</span><h1>Your secure workspace.</h1><p>Send files directly to the Overdrive team. Documents are stored in a private Cloudflare R2 bucket.</p></div><label className="upload-button"><UploadCloud size={17} />{uploading ? 'Uploading...' : 'Upload document'}<input type="file" onChange={uploadDocument} disabled={uploading} /></label></div>{state.error && <p className="form-error">{state.error}</p>}{documentError && <p className="form-error">{documentError}</p>}<section className="documents-panel"><div className="panel-heading"><div><span className="portal-eyebrow">Published files</span><h2>Your documents</h2></div><span>{documents.length} files</span></div>{documents.length === 0 ? <div className="empty-state"><FileText size={28} /><p>No published documents yet. The Overdrive team will post your prepared files here.</p></div> : <div className="document-list">{documents.map((file) => <div className="document-row" key={file.id}><span className="document-icon"><FileText size={19} /></span><span><strong>{file.file_name}</strong><small>{file.category || 'Other'} - {new Date(file.created_at).toLocaleDateString()}</small></span><span className="document-row-actions"><button onClick={() => openDocument(file)} aria-label={`View ${file.file_name}`}><Eye size={15} /> View</button><button onClick={() => openDocument(file, true)} aria-label={`Download ${file.file_name}`}><Download size={15} /> Download</button></span></div>)}</div>}</section></main></div>
+  return <ClientWorkspace session={session} onSignOut={async () => { await apiRequest('/api/client/logout', { method: 'POST' }); window.location.reload() }} />
 }
 
 function ClientAuth({ mode, setMode, form, setForm, error, onSubmit, onToken }) {

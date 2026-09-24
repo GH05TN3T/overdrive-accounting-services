@@ -136,12 +136,25 @@ async function ensureClient(env, email, name = '', business = '') {
   await env.DB.prepare("INSERT INTO clients (email, name, business) VALUES (?, ?, ?) ON CONFLICT(email) DO UPDATE SET name = CASE WHEN excluded.name != '' THEN excluded.name ELSE clients.name END, business = CASE WHEN excluded.business != '' THEN excluded.business ELSE clients.business END, updated_at = datetime('now')").bind(email.toLowerCase(), name.trim(), business.trim()).run()
 }
 
-async function sendEmailWithResend(env, email, subject, text) {
+async function ensureTaxTasks(env, email) {
+  const year = String(new Date().getFullYear())
+  const tasks = [
+    ['Prior-year tax return', 'Upload your most recent filed tax return.'],
+    ['Income records', 'Upload business income statements, 1099s, and other revenue records.'],
+    ['Expense records', 'Upload receipts, expense summaries, and deductible business costs.'],
+    ['Payroll records', 'Upload payroll summaries, W-2s, 1099s, and year-end reports when available.'],
+  ]
+  for (const [title, description] of tasks) {
+    await env.DB.prepare('INSERT OR IGNORE INTO tax_tasks (id, client_email, tax_year, title, description, status) VALUES (?, ?, ?, ?, ?, ?)').bind(`${email}-${year}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, email, year, title, description, 'requested').run()
+  }
+}
+
+async function sendEmailWithResend(env, email, subject, text, replyTo = '') {
   if (!env.RESEND_API_KEY) return { error: 'RESEND_API_KEY is not configured in Cloudflare.' }
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: env.EMAIL_FROM || 'Info@OverdriveAccountingServices.com', to: [email], subject, text }),
+    body: JSON.stringify({ from: env.EMAIL_FROM || 'Info@OverdriveAccountingServices.com', to: [email], subject, text, ...(replyTo ? { reply_to: replyTo } : {}) }),
   })
   const data = await response.json()
   if (!response.ok) return { error: data.message || 'Resend could not send the email.' }
@@ -243,6 +256,91 @@ async function handleApi(request, env) {
   if (path === '/api/client/session' && method === 'GET') {
     const email = await requireUser(request, env)
     return json({ authenticated: Boolean(email), email, configured: setup })
+  }
+
+  if (path === '/api/client/overview' && method === 'GET') {
+    const email = await requireUser(request, env)
+    if (!email) return json({ error: 'Client authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    await ensureTaxTasks(env, email)
+    const [client, appointments, documents, messages, tasks] = await Promise.all([
+      env.DB.prepare('SELECT email, name, business, phone, created_at FROM clients WHERE email = ?').bind(email).first(),
+      env.DB.prepare('SELECT * FROM appointments WHERE email = ? ORDER BY appointment_date ASC, created_at DESC').bind(email).all(),
+      env.DB.prepare('SELECT * FROM documents WHERE client_email = ? AND is_published = 1 ORDER BY created_at DESC').bind(email).all(),
+      env.DB.prepare('SELECT * FROM email_messages WHERE client_email = ? ORDER BY created_at DESC LIMIT 8').bind(email).all(),
+      env.DB.prepare('SELECT * FROM tax_tasks WHERE client_email = ? ORDER BY due_date ASC, created_at ASC').bind(email).all(),
+    ])
+    return json({ client: client || { email }, appointments: appointments.results || [], documents: documents.results || [], messages: messages.results || [], tax_tasks: tasks.results || [] })
+  }
+
+  if (path === '/api/client/messages' && method === 'GET') {
+    const email = await requireUser(request, env)
+    if (!email) return json({ error: 'Client authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    await env.DB.prepare("UPDATE email_messages SET is_read = 1 WHERE client_email = ? AND direction = 'outbound'").bind(email).run()
+    const result = await env.DB.prepare('SELECT * FROM email_messages WHERE client_email = ? ORDER BY created_at ASC').bind(email).all()
+    return json({ messages: result.results || [] })
+  }
+
+  if (path === '/api/client/messages' && method === 'POST') {
+    const email = await requireUser(request, env)
+    if (!email) return json({ error: 'Client authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const body = await request.json()
+    const subject = (body.subject || '').trim()
+    const text = (body.body_text || '').trim()
+    if (!subject || !text || subject.length > 160 || text.length > 10000) return json({ error: 'Subject and message are required.' }, 400)
+    const sent = await sendEmailWithResend(env, env.EMAIL_FROM || 'Info@OverdriveAccountingServices.com', subject, text, email)
+    if (sent.error) return json({ error: sent.error }, 503)
+    await env.DB.prepare('INSERT INTO email_messages (id, client_email, direction, subject, body_text, provider_id, is_read) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), email, 'inbound', subject, text, sent.id, 0).run()
+    return json({ ok: true }, 201)
+  }
+
+  const clientAppointmentMatch = path.match(/^\/api\/client\/appointments\/([^/]+)$/)
+  if (clientAppointmentMatch && method === 'PATCH') {
+    const email = await requireUser(request, env)
+    if (!email) return json({ error: 'Client authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const body = await request.json()
+    const appointment = await env.DB.prepare('SELECT id FROM appointments WHERE id = ? AND email = ?').bind(clientAppointmentMatch[1], email).first()
+    if (!appointment) return json({ error: 'Appointment not found.' }, 404)
+    const updates = []
+    const values = []
+    if (body.appointment_date) { updates.push('appointment_date = ?'); values.push(String(body.appointment_date).slice(0, 10)) }
+    if (body.appointment_time !== undefined) { updates.push('appointment_time = ?'); values.push(String(body.appointment_time).slice(0, 20)) }
+    if (body.status !== undefined) {
+      if (!['confirmed', 'cancelled'].includes(body.status)) return json({ error: 'Invalid client appointment status.' }, 400)
+      updates.push('status = ?'); values.push(body.status)
+    }
+    if (!updates.length) return json({ error: 'No appointment changes were provided.' }, 400)
+    updates.push("updated_at = datetime('now')")
+    values.push(clientAppointmentMatch[1])
+    await env.DB.prepare(`UPDATE appointments SET ${updates.join(', ')} WHERE id = ?`).bind(...values).run()
+    return json({ ok: true })
+  }
+
+  if (path === '/api/client/tax-tasks' && method === 'PATCH') {
+    const email = await requireUser(request, env)
+    if (!email) return json({ error: 'Client authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const body = await request.json()
+    if (!['requested', 'uploaded'].includes(body.status)) return json({ error: 'Invalid task status.' }, 400)
+    const result = await env.DB.prepare("UPDATE tax_tasks SET status = ?, updated_at = datetime('now') WHERE id = ? AND client_email = ?").bind(body.status, body.id, email).run()
+    if (!result.meta.changes) return json({ error: 'Task not found.' }, 404)
+    return json({ ok: true })
+  }
+
+  if (path === '/api/client/profile' && method === 'PATCH') {
+    const email = await requireUser(request, env)
+    if (!email) return json({ error: 'Client authentication required.' }, 401)
+    if (!env.DB) return json({ error: 'Cloudflare D1 is not connected yet.' }, 503)
+    const body = await request.json()
+    const name = String(body.name || '').trim().slice(0, 120)
+    const business = String(body.business || '').trim().slice(0, 160)
+    const phone = String(body.phone || '').trim().slice(0, 40)
+    await env.DB.prepare("UPDATE clients SET name = ?, business = ?, phone = ?, updated_at = datetime('now') WHERE email = ?").bind(name, business, phone, email).run()
+    await env.DB.prepare('UPDATE client_users SET name = ?, business = ? WHERE email = ?').bind(name, business, email).run()
+    return json({ ok: true })
   }
 
   if (path === '/api/appointments' && method === 'POST') {
