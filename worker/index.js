@@ -217,7 +217,7 @@ async function handleInboundEmail(message, env) {
   await env.DB.prepare('INSERT INTO email_messages (id, client_email, direction, subject, body_text, body_html, message_id, is_read) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), email, 'inbound', subject, parsed.text || '', parsed.html || '', message.headers.get('message-id') || '', 0).run()
 }
 
-async function handleApi(request, env) {
+async function handleApi(request, env, ctx) {
   const url = new URL(request.url)
   const path = url.pathname
   const method = request.method
@@ -226,12 +226,17 @@ async function handleApi(request, env) {
   if (path.startsWith('/api/blog/') && method === 'GET') {
     const slug = decodeURIComponent(path.slice('/api/blog/'.length))
     if (!blogSlugs.has(slug)) return json({ error: 'Blog article not found.' }, 404)
+    const cacheKey = new Request(request.url)
+    const cached = await caches.default.match(cacheKey)
+    if (cached) return cached
     const response = await fetch(`https://overdriveaccountingservices.com/wp-json/wp/v2/posts?slug=${encodeURIComponent(slug)}&_fields=title,content,date`)
     if (!response.ok) return json({ error: 'Blog article source unavailable.' }, 502)
     const posts = await response.json()
     const post = posts[0]
     if (!post) return json({ error: 'Blog article not found.' }, 404)
-    return json({ title: post.title.rendered, date: post.date, content: sanitizeBlogHtml(post.content.rendered) }, 200)
+    const articleResponse = new Response(JSON.stringify({ title: post.title.rendered, date: post.date, content: sanitizeBlogHtml(post.content.rendered) }), { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600, s-maxage=86400' } })
+    ctx?.waitUntil(caches.default.put(new Request(request.url), articleResponse.clone()))
+    return articleResponse
   }
 
   if (path === '/api/admin/session' && method === 'GET') {
@@ -558,11 +563,11 @@ async function handleApi(request, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     try {
       const url = new URL(request.url)
       if (['POST', 'PATCH', 'DELETE'].includes(request.method) && !sameOrigin(request)) return json({ error: 'Cross-origin request blocked.' }, 403)
-      if (url.pathname.startsWith('/api/')) return await handleApi(request, env)
+      if (url.pathname.startsWith('/api/')) return await handleApi(request, env, ctx)
       const response = await env.ASSETS.fetch(request)
       const headers = new Headers(response.headers)
       headers.set('X-Content-Type-Options', 'nosniff')
