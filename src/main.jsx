@@ -72,6 +72,33 @@ const services = [
   },
 ]
 
+const leadership = [
+  {
+    name: 'Alex Hodo, MBA',
+    role: 'CEO of Overdrive Accounting',
+    bio: 'Specializing in accounting and fractional CFO services for businesses. 15 years of experience providing strategic financial leadership, forecasting, cash-flow management, and business advisory services. Trusted advisor to business owners and leadership teams, focused on informed decision-making and sustainable growth. Serves on nearly 20 boards, with extensive experience in financial oversight, governance, and strategic planning.',
+    image: `${assetRoot}2024/06/AlexHodo.jpg`,
+  },
+  {
+    name: 'Wanda Nagovich, EA',
+    role: 'Senior Managing Accountant',
+    bio: '25 years of experience in accounting, tax, payroll, consulting, and business advisory services. Nearly 20 years of controller experience, overseeing financial teams and managing financial reporting, reconciliations, budgeting, cash flow, and day-to-day accounting operations. Enrolled Agent authorized to represent businesses before the IRS and state tax authorities, with expertise in tax matters, compliance, and representation.',
+    image: `${assetRoot}2024/06/Wanda2.jpg`,
+  },
+  {
+    name: 'Karla Gonzalez',
+    role: 'Senior Bookkeeper',
+    bio: 'Award-winning bookkeeper with 20+ years of experience managing financial records and accounting processes. Skilled in accounts payable, accounts receivable, reconciliations, payroll, and financial reporting. Known for accuracy, organization, confidentiality, and strong attention to detail. Dependable professional committed to maintaining accurate records and supporting smooth day-to-day financial operations.',
+    image: `${assetRoot}2026/09/Karla-Gonzalez-1.png`,
+  },
+  {
+    name: 'Shaun Hodo',
+    role: 'In House Counsel',
+    bio: 'In-house counsel with nearly 10 years of experience advising a small business accounting firm. Well-versed in business law, including contracts, insurance, employment, and workers’ compensation. Experienced in contract review, legal risk management, negotiation, and general business matters. Provides strategic, practical legal guidance to protect the firm and support its continued growth.',
+    image: `${assetRoot}2026/09/Shaun-Hodo-1.jpg`,
+  },
+]
+
 const testimonials = [
   {
     quote: 'The confidence I have in knowing my ducks are in a row with Overdrive in charge allows me to focus on the mission of my company.',
@@ -283,12 +310,14 @@ function MarketingSite() {
           <div className="intro-layout">
             <h2>The accounting partner <span>you deserve.</span></h2>
             <div className="intro-body">
-              <p>At Overdrive Accounting Services, we champion real results for real achievers.</p>
-              <p>As you navigate the evolving landscape of business, let our team be your guiding star, bringing experience, strategy, and unparalleled expertise to your journey.</p>
+              <p>Overdrive Accounting Services provides a comprehensive suite of financial services designed to drive your business’s success.</p>
+              <p>From meticulous accounting and bookkeeping to expert payroll management, business advising, business plan creation, and small business funding application assistance, our team is dedicated to delivering professional and personalized solutions. We understand the challenges you face and are here to ensure your financial operations are seamless and your strategic decisions are informed. Let us help you navigate the complexities of financial management with precision and expertise. Contact us today to discover how Overdrive Accounting Services can elevate your business to new heights!</p>
               <a className="text-link" href="#contact">Get to know Overdrive <ArrowUpRight size={17} /></a>
             </div>
           </div>
         </section>
+
+        <section className="leadership-section section-pad" aria-labelledby="leadership-title"><div className="section-kicker">Meet our leadership <span /></div><h2 id="leadership-title">The people behind <span>Overdrive.</span></h2><div className="leadership-grid">{leadership.map((person) => <article className="leader-card" key={person.name}><div className="leader-image"><img src={person.image} alt={person.name} /></div><div className="leader-content"><h3>{person.name}</h3><span>{person.role}</span><p>{person.bio}</p></div></article>)}</div></section>
 
         <section className="services-section section-pad" id="services">
           <div className="section-heading-row">
