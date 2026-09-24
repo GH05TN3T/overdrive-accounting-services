@@ -124,6 +124,48 @@ const testimonials = [
     role: '',
     initials: 'SP',
   },
+  {
+    quote: 'Alex and his team are amazing!! I would absolutely recommend Overdrive Accounting Services for all your accounting needs without a doubt.',
+    name: 'Tammy Sims',
+    role: '',
+    initials: 'TS',
+  },
+  {
+    quote: 'We cannot say enough good things about Overdrive Accounting Services. They handle our business taxes as well as our personal taxes and they truly do it all. They have become integral to our growth and feel more like trusted advisors than just accountants.',
+    name: 'Jesenia Gonzalez',
+    role: '',
+    initials: 'JG',
+  },
+  {
+    quote: 'It has been a delight and a stress reliever to work with Alex and his team. Everyone is quite interpersonal and always goes above and beyond what is expected. I appreciate the passion and dedication for their work, and their ability to treat me as more than just a client.',
+    name: 'Prince Legal',
+    role: '',
+    initials: 'PL',
+  },
+  {
+    quote: 'I’ve had the pleasure of working with Alex and the Overdrive Team. They have a natural ability to connect with people and are incredibly helpful. The professionals at Overdrive Accounting Services are solutions-oriented and their expertise truly stands out.',
+    name: 'V. Cobo',
+    role: '',
+    initials: 'VC',
+  },
+  {
+    quote: 'Overdrive Accounting Services has done a fantastic job of helping me to legally minimize my tax liability, saving me tens of thousands of dollars. Alex is a joy to work with and working with Wanda leaves you knowing you are in good hands.',
+    name: 'Jason Baruch',
+    role: '',
+    initials: 'JB',
+  },
+  {
+    quote: 'Outstanding service - responsive and detailed! Alex and his team at Overdrive are exceptional. They are incredibly responsive, highly detailed in their work, and always willing to go above and beyond to support our business.',
+    name: 'Allure Exhibits',
+    role: '',
+    initials: 'AE',
+  },
+  {
+    quote: 'I own a small law firm and have been without an accountant for too long. Overdrive Accounting was recommended to me and I could not be happier. Every decision has been explained to me in detail and they are extremely responsive to any inquiries.',
+    name: 'Roseanne Eckert',
+    role: '',
+    initials: 'RE',
+  },
 ]
 
 const partnerLogos = [
