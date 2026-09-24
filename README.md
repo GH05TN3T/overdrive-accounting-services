@@ -76,6 +76,14 @@ npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migratio
 
 Admins can upload tax, payroll, accounting, or other files as drafts and publish them from `/admin`. Clients only see published files in `/portal`.
 
+11. Enable the client CRM checklist data:
+
+```bash
+npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migrations/0006_client_crm.sql
+```
+
+The client workspace includes overview metrics, documents, appointments, secure messages, tax checklist, profile settings, and notifications based on unread activity.
+
 Verify the domain in Resend and create a Cloudflare Email Routing rule for `Info@OverdriveAccountingServices.com` that sends to this Worker. Incoming messages are stored in D1 and appear under **Clients & inbox**. Outbound messages are sent through Resend.
 
 The public appointment form writes to D1. Client documents are stored in the private R2 bucket. Staff use `/admin` to review appointments, change status, and manage documents. The dashboard polls for updates every 30 seconds and also has a manual refresh action.
