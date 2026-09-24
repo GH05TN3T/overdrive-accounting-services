@@ -378,7 +378,7 @@ function MarketingSite() {
         </button>
         <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`}>
           <a className="nav-link" href="#services" onClick={closeMenu}>Services</a>
-          <a className="nav-link" href="#insights" onClick={closeMenu}>Resources</a>
+          <a className="nav-link" href="/resources" onClick={closeMenu}>Resources</a>
           <a className="nav-link" href="#about" onClick={closeMenu}>About us</a>
           <a className="nav-link" href="#insights" onClick={closeMenu}>Insights</a>
           <a className="nav-link nav-portal" href={clientPortalUrl} onClick={closeMenu}><span className="nav-portal-pulse" /> Client portal <ArrowUpRight size={14} /></a>
@@ -461,7 +461,7 @@ function MarketingSite() {
           <section className="insights section-pad" id="insights">
            <div className="section-heading-row"><div><div className="section-kicker">Recent blog posts <span /></div><h2>Overdrive Accounting Services <span>blog.</span></h2></div><a className="text-link" href="https://www.irs.gov/newsroom" target="_blank" rel="noreferrer">Follow IRS updates <ArrowUpRight size={17} /></a></div>
            <div className="insight-filters" aria-label="Filter insights">{['All updates', 'Tax & IRS', 'Tax law', 'Accounting', 'Payroll & HR'].map((category) => <button className={insightCategory === category ? 'active' : ''} key={category} onClick={() => setInsightCategory(category)}>{category}</button>)}</div>
-           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date}{visibleInsights[0].readTime && <><span>•</span> {visibleInsights[0].readTime}</>}</div><h3>{visibleInsights[0].title}</h3>{visibleInsights[0].summary && <p className="insight-summary">{visibleInsights[0].summary}</p>}{visibleInsights[0].source === 'Overdrive Accounting Services' ? <button className="text-link insight-button" onClick={() => openBlog(visibleInsights[0])}>Read article <ArrowUpRight size={16} /></button> : <a className="text-link" href={visibleInsights[0].sourceUrl} target="_blank" rel="noreferrer">Read source: {visibleInsights[0].source} <ArrowUpRight size={16} /></a>}</article><div className="insight-list">{visibleInsights.slice(1).map((post, index) => <article key={post.title}><span className="insight-index">{String(index + 1).padStart(2, '0')}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3>{post.summary && <p>{post.summary}</p>}{post.source === 'Overdrive Accounting Services' ? <button className="insight-list-button" onClick={() => openBlog(post)}>Read article <ArrowUpRight size={15} /></button> : <a href={post.sourceUrl} target="_blank" rel="noreferrer">Read source <ArrowUpRight size={15} /></a>}</div></article>)}</div></div>
+            <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date}{visibleInsights[0].readTime && <><span>•</span> {visibleInsights[0].readTime}</>}</div><h3>{visibleInsights[0].title}</h3>{visibleInsights[0].summary && <p className="insight-summary">{visibleInsights[0].summary}</p>}{visibleInsights[0].source === 'Overdrive Accounting Services' ? <button className="text-link insight-button" onClick={() => openBlog(visibleInsights[0])}>Read article <ArrowUpRight size={16} /></button> : <a className="text-link" href={visibleInsights[0].sourceUrl} target="_blank" rel="noreferrer">Read source: {visibleInsights[0].source} <ArrowUpRight size={16} /></a>}</article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">{String(index + 1).padStart(2, '0')}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3>{post.summary && <p>{post.summary}</p>}{post.source === 'Overdrive Accounting Services' ? <button className="insight-list-button" onClick={() => openBlog(post)}>Read article <ArrowUpRight size={15} /></button> : <a href={post.sourceUrl} target="_blank" rel="noreferrer">Read source <ArrowUpRight size={15} /></a>}</div></article>)}</div></div>
           </section>
 
          <section className="appointment-section section-pad" id="appointment"><div className="appointment-layout"><div className="appointment-copy"><div className="section-kicker">Start with a conversation <span /></div><h2>Let’s find the <span>right next step.</span></h2><p>Tell us a little about your business and choose a preferred date. Our team will follow up to confirm the conversation.</p><div className="appointment-details"><span>01</span><p>Submit your request</p><span>02</span><p>We confirm the time</p><span>03</span><p>We get to work</p></div></div><div className="appointment-card"><div className="appointment-card-top"><span>Free consultation</span><small>Usually 30 minutes</small></div><AppointmentForm /></div></div></section>
@@ -480,8 +480,26 @@ function MarketingSite() {
 function App() {
   const route = window.location.pathname.replace(/\/+$/, '') || '/'
   if (route === '/admin') return <AdminDashboard />
+  if (route === '/resources') return <ResourcesPage />
   if (route === '/portal') return <PortalRedirect />
   return <MarketingSite />
+}
+
+function ResourcesPage() {
+  const [category, setCategory] = useState('All updates')
+  const [selectedBlog, setSelectedBlog] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const categories = ['All updates', 'Tax strategy', 'Business growth', 'Accounting', 'Payroll & HR', 'Tax & IRS', 'Tax law']
+  const posts = category === 'All updates' ? insights : insights.filter((post) => post.category === category)
+  const openPost = async (post) => {
+    if (post.source !== 'Overdrive Accounting Services') return
+    setLoading(true)
+    const slug = post.sourceUrl.split('/').filter(Boolean).pop()
+    const response = await fetch(`/api/blog/${slug}`)
+    if (response.ok) setSelectedBlog(await response.json())
+    setLoading(false)
+  }
+  return <div className="resources-page"><header className="resources-header"><a href="/" className="resources-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /></a><nav><a href="/">Home</a><a className="active" href="/resources">Resources</a><a href={clientPortalUrl}>Client portal</a><a className="button button-small" href="/#appointment">Free consultation <ArrowUpRight size={15} /></a></nav></header><main className="resources-main"><div className="resources-hero"><span className="section-kicker">Overdrive Accounting Services</span><h1>Recent <em>blog posts.</em></h1><p>Tax preparation, accounting, payroll, and business guidance from the Overdrive team.</p></div><div className="resource-filters">{categories.map((item) => <button className={category === item ? 'active' : ''} onClick={() => setCategory(item)} key={item}>{item}</button>)}</div><div className="resource-card-grid">{posts.map((post) => <article className="resource-card" key={post.title}><div className="resource-card-image"><img src={post.image} alt="" /><span>{post.category}</span></div><div className="resource-card-body"><div className="insight-meta">{post.date}{post.readTime && <><span>•</span> {post.readTime}</>}</div><h2>{post.title}</h2>{post.summary && <p>{post.summary}</p>}{post.source === 'Overdrive Accounting Services' ? <button className="text-link" onClick={() => openPost(post)}>Read article <ArrowUpRight size={16} /></button> : <a className="text-link" href={post.sourceUrl} target="_blank" rel="noreferrer">Read source <ArrowUpRight size={16} /></a>}</div></article>)}</div></main><footer className="resources-footer"><span>© 2024 Overdrive Accounting Services, LLC</span><a href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com</a></footer>{loading && <div className="blog-loading">Loading article...</div>}{selectedBlog && <BlogModal article={selectedBlog} onClose={() => setSelectedBlog(null)} />}</div>
 }
 
 function PortalRedirect() {
