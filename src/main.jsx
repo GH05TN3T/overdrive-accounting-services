@@ -317,7 +317,7 @@ function MarketingSite() {
           </div>
         </section>
 
-        <section className="leadership-section section-pad" aria-labelledby="leadership-title"><div className="section-kicker">Meet our leadership <span /></div><h2 id="leadership-title">The people behind <span>Overdrive.</span></h2><div className="leadership-grid">{leadership.map((person) => <article className="leader-card" key={person.name}><div className="leader-image"><img src={person.image} alt={person.name} /></div><div className="leader-content"><h3>{person.name}</h3><span>{person.role}</span><p>{person.bio}</p></div></article>)}</div></section>
+        <section className="leadership-section section-pad" aria-labelledby="leadership-title"><div className="section-kicker">Meet our leadership <span /></div><h2 id="leadership-title">The professionals behind <span>Overdrive.</span></h2><div className="leadership-grid">{leadership.map((person) => <article className="leader-card" key={person.name}><div className="leader-image"><img src={person.image} alt={person.name} /></div><div className="leader-content"><h3>{person.name}</h3><span>{person.role}</span><p>{person.bio}</p></div></article>)}</div></section>
 
         <section className="services-section section-pad" id="services">
           <div className="section-heading-row">
