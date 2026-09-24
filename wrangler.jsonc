@@ -24,6 +24,6 @@
   "vars": {
     "ADMIN_EMAIL": "cyborgjedi@outlook.com",
     "ADMIN_EMAILS": "Info@OverdriveAccountingServices.com,cyborgjedi@outlook.com",
-    "EMAIL_FROM": "Info@OverdriveAccountingServices.com"
+    "EMAIL_FROM": "Info@demo.cyborgjedi.com"
   }
 }
