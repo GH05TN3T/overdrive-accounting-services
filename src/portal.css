@@ -198,6 +198,7 @@
 .setup-notice { max-width: 640px; }
 
 .dashboard-shell { display: flex; }
+.panel-hidden { display: none !important; }
 .dashboard-sidebar { background: var(--ink); color: var(--white); display: flex; flex: 0 0 238px; flex-direction: column; min-height: 100vh; padding: 29px 19px 23px; position: fixed; width: 238px; z-index: 3; }
 .dashboard-sidebar .portal-logo { border-bottom: 1px solid rgba(255,255,255,.16); display: block; padding: 0 10px 28px; }
 .dashboard-sidebar .portal-logo img { max-width: 175px; }
@@ -337,6 +338,10 @@
 .message-composer input, .message-composer textarea { background: var(--white); border: 1px solid var(--line); color: var(--ink); font: 12px 'DM Sans', sans-serif; outline: none; padding: 11px; resize: vertical; width: 100%; }
 .message-composer input:focus, .message-composer textarea:focus { border-color: var(--orange); }
 .message-composer .button { align-self: flex-start; border: 0; cursor: pointer; }
+.client-file-strip { background: var(--sand); display: flex; flex-wrap: wrap; gap: 8px; margin: 17px 0 0; padding: 12px; }
+.client-file-strip > span { flex-basis: 100%; }
+.client-file-strip > small { color: var(--muted); font-size: 10px; }
+.client-file-strip > a { align-items: center; background: var(--white); color: var(--orange); display: inline-flex; font-size: 10px; gap: 5px; padding: 7px 8px; }
 .client-empty { align-items: center; color: var(--muted); display: flex; flex-direction: column; font-size: 11px; gap: 12px; justify-content: center; min-height: 160px; text-align: center; }
 .client-empty p { margin: 0; }
 .client-empty-large { flex: 1; min-height: 400px; }
