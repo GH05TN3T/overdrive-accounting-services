@@ -84,6 +84,8 @@ npx wrangler d1 execute overdrive-accounting --remote --file=cloudflare/migratio
 
 The public Client portal link points to the existing SecureFilePro portal. The internal CRM tools remain available to staff under `/admin`.
 
+Blog articles are stored in `src/data/blogContent.json` and rendered inside the demo. To refresh the local snapshot from the original published content, run `node scripts/sync-blog.mjs` before committing; the deployed site does not request the original site at runtime.
+
 Verify the domain in Resend and create a Cloudflare Email Routing rule for `Info@OverdriveAccountingServices.com` that sends to this Worker. Incoming messages are stored in D1 and appear under **Clients & inbox**. Outbound messages are sent through Resend.
 
 The public appointment form writes to D1. Client documents are stored in the private R2 bucket. Staff use `/admin` to review appointments, change status, and manage documents. The dashboard polls for updates every 30 seconds and also has a manual refresh action.

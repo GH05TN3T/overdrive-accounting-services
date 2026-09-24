@@ -15,6 +15,7 @@ import {
 import AdminDashboard from './components/AdminDashboard'
 import AppointmentForm from './components/AppointmentForm'
 import FaqPage from './components/FaqPage'
+import blogContent from './data/blogContent.json'
 import './styles.css'
 import './portal.css'
 
@@ -358,14 +359,10 @@ function MarketingSite() {
   const visibleInsights = insightCategory === 'All updates' ? insights : insights.filter((post) => post.category === insightCategory)
   const openBlog = async (post) => {
     const slug = post.sourceUrl.split('/').filter(Boolean).pop()
-    setBlogLoading(true)
+    const article = blogContent[slug]
+    if (!article) { setBlogError('This article is not available in the local blog archive.'); return }
     setBlogError('')
-    try {
-      const response = await fetch(`/api/blog/${slug}`)
-      if (!response.ok) throw new Error('This article is unavailable right now.')
-      setSelectedBlog(await response.json())
-    } catch (error) { setBlogError(error.message) }
-    setBlogLoading(false)
+    setSelectedBlog(article)
   }
 
   return (
@@ -497,8 +494,8 @@ function ResourcesPage() {
     if (post.source !== 'Overdrive Accounting Services') return
     setLoading(true)
     const slug = post.sourceUrl.split('/').filter(Boolean).pop()
-    const response = await fetch(`/api/blog/${slug}`)
-    if (response.ok) setSelectedBlog(await response.json())
+    const article = blogContent[slug]
+    if (article) setSelectedBlog(article)
     setLoading(false)
   }
   return <div className="resources-page"><header className="resources-header"><a href="/" className="resources-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /></a><nav><a href="/">Home</a><a className="active" href="/resources">Resources</a><a href="/faq">FAQ</a><a href={clientPortalUrl}>Client portal</a><a className="button button-small" href="/#appointment">Free consultation <ArrowUpRight size={15} /></a></nav></header><main className="resources-main"><div className="resources-hero"><span className="section-kicker">Overdrive Accounting Services</span><h1>Recent <em>blog posts.</em></h1><p>Tax preparation, accounting, payroll, and business guidance from the Overdrive team.</p></div><div className="resource-filters">{categories.map((item) => <button className={category === item ? 'active' : ''} onClick={() => setCategory(item)} key={item}>{item}</button>)}</div><div className="resource-card-grid">{posts.map((post) => <article className="resource-card" key={post.title}><div className="resource-card-image"><img src={post.image} alt="" /><span>{post.category}</span></div><div className="resource-card-body"><div className="insight-meta">{post.date}{post.readTime && <><span>•</span> {post.readTime}</>}</div><h2>{post.title}</h2>{post.summary && <p>{post.summary}</p>}{post.source === 'Overdrive Accounting Services' ? <button className="text-link" onClick={() => openPost(post)}>Read article <ArrowUpRight size={16} /></button> : <a className="text-link" href={post.sourceUrl} target="_blank" rel="noreferrer">Read source <ArrowUpRight size={16} /></a>}</div></article>)}</div></main><footer className="resources-footer"><span>© 2024 Overdrive Accounting Services, LLC</span><a href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com</a></footer>{loading && <div className="blog-loading">Loading article...</div>}{selectedBlog && <BlogModal article={selectedBlog} onClose={() => setSelectedBlog(null)} />}</div>

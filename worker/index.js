@@ -127,30 +127,6 @@ function safeFileName(name) {
   return name.replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 150)
 }
 
-const blogSlugs = new Set([
-  '2025-tax-season-checklist-is-your-business-ready',
-  'avoid-these-common-tax-filing-mistakes-and-save-big-this-year',
-  'top-tax-deductions-every-small-business-should-know-for-2025',
-  'from-payroll-to-taxes-how-we-handle-it-all',
-  'big-league-financial-expertise-at-a-fraction-of-the-price',
-  'the-benefits-of-an-all-in-one-accounting-service',
-  'the-smart-way-to-manage-payroll-taxes-and-bookkeeping',
-  'the-hidden-costs-of-in-house-accounting',
-  'why-outsourcing-your-accounting-is-like-hiring-a-full-department',
-])
-
-function sanitizeBlogHtml(html) {
-  return html
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/\s+on[a-z]+\s*=\s*(["']).*?\1/gi, '')
-    .replace(/href=["']https:\/\/overdriveaccountingservices\.com\/consultation\/?["']/gi, 'href="#appointment"')
-    .replace(/href=["']https:\/\/overdriveaccountingservices\.com\/about-us\/?["']/gi, 'href="#about"')
-    .replace(/href=["']https:\/\/overdriveaccountingservices\.com\/services\/?["']/gi, 'href="#services"')
-    .replace(/href=["']https:\/\/overdriveaccountingservices\.com\/blog\/?["']/gi, 'href="#insights"')
-    .replace(/href=["']https:\/\/overdriveaccountingservices\.com\/?["']/gi, 'href="#top"')
-}
-
 function sameOrigin(request) {
   const origin = request.headers.get('Origin')
   return !origin || origin === new URL(request.url).origin
@@ -222,22 +198,6 @@ async function handleApi(request, env, ctx) {
   const path = url.pathname
   const method = request.method
   const setup = configured(env)
-
-  if (path.startsWith('/api/blog/') && method === 'GET') {
-    const slug = decodeURIComponent(path.slice('/api/blog/'.length))
-    if (!blogSlugs.has(slug)) return json({ error: 'Blog article not found.' }, 404)
-    const cacheKey = new Request(request.url)
-    const cached = await caches.default.match(cacheKey)
-    if (cached) return cached
-    const response = await fetch(`https://overdriveaccountingservices.com/wp-json/wp/v2/posts?slug=${encodeURIComponent(slug)}&_fields=title,content,date`)
-    if (!response.ok) return json({ error: 'Blog article source unavailable.' }, 502)
-    const posts = await response.json()
-    const post = posts[0]
-    if (!post) return json({ error: 'Blog article not found.' }, 404)
-    const articleResponse = new Response(JSON.stringify({ title: post.title.rendered, date: post.date, content: sanitizeBlogHtml(post.content.rendered) }), { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600, s-maxage=86400' } })
-    ctx?.waitUntil(caches.default.put(new Request(request.url), articleResponse.clone()))
-    return articleResponse
-  }
 
   if (path === '/api/admin/session' && method === 'GET') {
     const admin = await requireAdmin(request, env)
