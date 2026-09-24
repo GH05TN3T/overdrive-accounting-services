@@ -2,10 +2,6 @@ import PostalMime from 'postal-mime'
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } })
 
-function accessEmail(request) {
-  return (request.headers.get('CF-Access-Authenticated-User-Email') || '').trim().toLowerCase()
-}
-
 function adminEmails(env) {
   return (env.ADMIN_EMAILS || env.ADMIN_EMAIL || '').split(',').map((email) => email.trim().toLowerCase()).filter(Boolean)
 }
@@ -75,8 +71,6 @@ async function createClientSession(email, env) {
 }
 
 async function clientSessionEmail(request, env) {
-  const access = accessEmail(request)
-  if (access) return access
   const token = cookieValue(request, 'overdrive_client')
   if (!token || !env.CLIENT_SESSION_SECRET) return null
   const [encodedPayload, encodedSignature] = token.split('.')
@@ -90,8 +84,6 @@ async function clientSessionEmail(request, env) {
 }
 
 async function sessionEmail(request, env) {
-  const access = accessEmail(request)
-  if (access && adminEmails(env).includes(access)) return access
   const token = cookieValue(request, 'overdrive_admin')
   if (!token || !env.ADMIN_SESSION_SECRET) return null
   const [encodedPayload, encodedSignature] = token.split('.')
@@ -173,9 +165,8 @@ async function handleApi(request, env) {
   const setup = configured(env)
 
   if (path === '/api/admin/session' && method === 'GET') {
-    const email = accessEmail(request)
     const admin = await requireAdmin(request, env)
-    return json({ authenticated: Boolean(admin), email: admin || email, isAdmin: Boolean(admin), configured: setup })
+    return json({ authenticated: Boolean(admin), email: admin || '', isAdmin: Boolean(admin), configured: setup })
   }
 
   if (path === '/api/admin/login' && method === 'POST') {
