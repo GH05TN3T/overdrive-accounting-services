@@ -226,6 +226,56 @@ const insights = [
     sourceUrl: 'https://overdriveaccountingservices.com/from-payroll-to-taxes-how-we-handle-it-all/',
   },
   {
+    category: 'Business growth',
+    date: 'December 9, 2024',
+    readTime: '',
+    title: 'Big-League Financial Expertise at a Fraction of the Price',
+    summary: '',
+    image: `${assetRoot}2024/06/Accounting.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/big-league-financial-expertise-at-a-fraction-of-the-price/',
+  },
+  {
+    category: 'Accounting',
+    date: 'November 11, 2024',
+    readTime: '',
+    title: 'The Benefits of an All-In-One Accounting Service',
+    summary: '',
+    image: `${assetRoot}2024/06/Accounting.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/the-benefits-of-an-all-in-one-accounting-service/',
+  },
+  {
+    category: 'Payroll & HR',
+    date: 'October 11, 2024',
+    readTime: '',
+    title: 'The Smart Way to Manage Payroll, Taxes, and Bookkeeping',
+    summary: '',
+    image: `${assetRoot}2024/06/PayrollManagement.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/the-smart-way-to-manage-payroll-taxes-and-bookkeeping/',
+  },
+  {
+    category: 'Accounting',
+    date: 'September 4, 2024',
+    readTime: '',
+    title: 'The Hidden Costs of In-House Accounting',
+    summary: '',
+    image: `${assetRoot}2024/06/Accounting.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/the-hidden-costs-of-in-house-accounting/',
+  },
+  {
+    category: 'Accounting',
+    date: 'August 15, 2024',
+    readTime: '',
+    title: 'Why Outsourcing Your Accounting Is Like Hiring A Full Department',
+    summary: '',
+    image: `${assetRoot}2024/06/Accounting.jpg`,
+    source: 'Overdrive Accounting Services',
+    sourceUrl: 'https://overdriveaccountingservices.com/why-outsourcing-your-accounting-is-like-hiring-a-full-department/',
+  },
+  {
     category: 'Tax & IRS',
     date: 'September 4, 2026',
     readTime: '4 min read',
@@ -291,6 +341,9 @@ function MarketingSite() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [testimonial, setTestimonial] = useState(0)
   const [insightCategory, setInsightCategory] = useState('All updates')
+  const [selectedBlog, setSelectedBlog] = useState(null)
+  const [blogLoading, setBlogLoading] = useState(false)
+  const [blogError, setBlogError] = useState('')
 
   useEffect(() => {
     const rotation = setInterval(() => {
@@ -302,6 +355,17 @@ function MarketingSite() {
 
   const closeMenu = () => setMenuOpen(false)
   const visibleInsights = insightCategory === 'All updates' ? insights : insights.filter((post) => post.category === insightCategory)
+  const openBlog = async (post) => {
+    const slug = post.sourceUrl.split('/').filter(Boolean).pop()
+    setBlogLoading(true)
+    setBlogError('')
+    try {
+      const response = await fetch(`/api/blog/${slug}`)
+      if (!response.ok) throw new Error('This article is unavailable right now.')
+      setSelectedBlog(await response.json())
+    } catch (error) { setBlogError(error.message) }
+    setBlogLoading(false)
+  }
 
   return (
     <div className="site-shell">
@@ -397,12 +461,15 @@ function MarketingSite() {
           <section className="insights section-pad" id="insights">
            <div className="section-heading-row"><div><div className="section-kicker">Recent blog posts <span /></div><h2>Overdrive Accounting Services <span>blog.</span></h2></div><a className="text-link" href="https://www.irs.gov/newsroom" target="_blank" rel="noreferrer">Follow IRS updates <ArrowUpRight size={17} /></a></div>
            <div className="insight-filters" aria-label="Filter insights">{['All updates', 'Tax & IRS', 'Tax law', 'Accounting', 'Payroll & HR'].map((category) => <button className={insightCategory === category ? 'active' : ''} key={category} onClick={() => setInsightCategory(category)}>{category}</button>)}</div>
-           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date}{visibleInsights[0].readTime && <><span>•</span> {visibleInsights[0].readTime}</>}</div><h3>{visibleInsights[0].title}</h3>{visibleInsights[0].summary && <p className="insight-summary">{visibleInsights[0].summary}</p>}<a className="text-link" href={visibleInsights[0].sourceUrl} target={visibleInsights[0].sourceUrl.startsWith('http') ? '_blank' : undefined} rel={visibleInsights[0].sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>{visibleInsights[0].sourceUrl === '#appointment' ? 'Start a conversation' : visibleInsights[0].source === 'Overdrive Accounting Services' ? 'Read article' : `Read source: ${visibleInsights[0].source}`} <ArrowUpRight size={16} /></a></article><div className="insight-list">{visibleInsights.slice(1, 4).map((post, index) => <article key={post.title}><span className="insight-index">0{index + 1}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3>{post.summary && <p>{post.summary}</p>}<a href={post.sourceUrl} target={post.sourceUrl.startsWith('http') ? '_blank' : undefined} rel={post.sourceUrl.startsWith('http') ? 'noreferrer' : undefined}>Read article <ArrowUpRight size={15} /></a></div></article>)}</div></div>
+           <div className="insights-grid"><article className="featured-insight"><div className="insight-image"><img src={visibleInsights[0].image} alt="" /><span>{visibleInsights[0].category}</span></div><div className="insight-meta">{visibleInsights[0].date}{visibleInsights[0].readTime && <><span>•</span> {visibleInsights[0].readTime}</>}</div><h3>{visibleInsights[0].title}</h3>{visibleInsights[0].summary && <p className="insight-summary">{visibleInsights[0].summary}</p>}{visibleInsights[0].source === 'Overdrive Accounting Services' ? <button className="text-link insight-button" onClick={() => openBlog(visibleInsights[0])}>Read article <ArrowUpRight size={16} /></button> : <a className="text-link" href={visibleInsights[0].sourceUrl} target="_blank" rel="noreferrer">Read source: {visibleInsights[0].source} <ArrowUpRight size={16} /></a>}</article><div className="insight-list">{visibleInsights.slice(1).map((post, index) => <article key={post.title}><span className="insight-index">{String(index + 1).padStart(2, '0')}</span><div><div className="insight-meta">{post.date} <span>•</span> {post.category}</div><h3>{post.title}</h3>{post.summary && <p>{post.summary}</p>}{post.source === 'Overdrive Accounting Services' ? <button className="insight-list-button" onClick={() => openBlog(post)}>Read article <ArrowUpRight size={15} /></button> : <a href={post.sourceUrl} target="_blank" rel="noreferrer">Read source <ArrowUpRight size={15} /></a>}</div></article>)}</div></div>
           </section>
 
          <section className="appointment-section section-pad" id="appointment"><div className="appointment-layout"><div className="appointment-copy"><div className="section-kicker">Start with a conversation <span /></div><h2>Let’s find the <span>right next step.</span></h2><p>Tell us a little about your business and choose a preferred date. Our team will follow up to confirm the conversation.</p><div className="appointment-details"><span>01</span><p>Submit your request</p><span>02</span><p>We confirm the time</p><span>03</span><p>We get to work</p></div></div><div className="appointment-card"><div className="appointment-card-top"><span>Free consultation</span><small>Usually 30 minutes</small></div><AppointmentForm /></div></div></section>
 
          <section className="contact-section" id="contact"><div className="contact-bg-word">OVERDRIVE</div><div className="contact-inner"><div className="section-kicker eyebrow-light">Ready to get started <span /></div><h2>Ready to push your business into <em>overdrive?</em></h2><p>Schedule a free consultation and discover how Overdrive Accounting Services can elevate your business to new heights.</p><a className="button button-accent" href="#appointment">Schedule a free consultation <ArrowUpRight size={18} /></a></div><div className="contact-curve" /></section>
+         {blogLoading && <div className="blog-loading">Loading article...</div>}
+         {blogError && <div className="blog-error">{blogError}</div>}
+         {selectedBlog && <BlogModal article={selectedBlog} onClose={() => setSelectedBlog(null)} />}
       </main>
 
       <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href={clientPortalUrl}>Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
@@ -420,6 +487,10 @@ function App() {
 function PortalRedirect() {
   useEffect(() => { window.location.replace(clientPortalUrl) }, [])
   return <div className="portal-page"><main className="portal-content"><p>Redirecting to the secure client portal...</p></main></div>
+}
+
+function BlogModal({ article, onClose }) {
+  return <div className="blog-modal-backdrop" onMouseDown={onClose}><article className="blog-modal" onMouseDown={(event) => event.stopPropagation()}><button className="blog-modal-close" onClick={onClose} aria-label="Close article">X</button><span className="section-kicker">Overdrive Accounting Services Blog <span /></span><h2>{article.title}</h2><div className="blog-modal-date">{new Date(article.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div><div className="blog-modal-content" dangerouslySetInnerHTML={{ __html: article.content }} /></article></div>
 }
 
 createRoot(document.getElementById('root')).render(<StrictMode><App /></StrictMode>)

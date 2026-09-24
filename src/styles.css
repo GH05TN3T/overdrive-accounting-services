@@ -176,6 +176,25 @@ blockquote { font-family: 'Playfair Display', serif; font-size: clamp(24px, 3vw,
 .insight-list h3 { font-size: 18px; font-weight: 500; letter-spacing: -.03em; line-height: 1.2; margin: 12px 0 16px; max-width: 330px; }
 .insight-list p { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0 0 14px; max-width: 340px; }
 .insight-list a { align-items: center; color: var(--orange); display: inline-flex; font-size: 11px; font-weight: 700; gap: 7px; }
+.insight-button, .insight-list-button { background: none; border: 0; color: var(--orange); cursor: pointer; padding: 0 0 6px; }
+.insight-list-button { align-items: center; display: inline-flex; font-size: 11px; font-weight: 700; gap: 7px; }
+.blog-loading, .blog-error { background: var(--ink); bottom: 20px; color: var(--white); font-size: 12px; padding: 13px 18px; position: fixed; right: 20px; z-index: 30; }
+.blog-error { background: var(--orange); }
+.blog-modal-backdrop { align-items: center; background: rgba(0,0,0,.65); display: flex; inset: 0; justify-content: center; padding: 30px; position: fixed; z-index: 50; }
+.blog-modal { background: var(--paper); max-height: 90vh; max-width: 900px; overflow-y: auto; padding: clamp(28px, 5vw, 70px); position: relative; width: 100%; }
+.blog-modal-close { background: var(--ink); border: 0; color: var(--white); cursor: pointer; font-size: 16px; height: 38px; position: absolute; right: 20px; top: 20px; width: 38px; }
+.blog-modal h2 { font-size: clamp(38px, 5vw, 65px); margin: 24px 0 10px; max-width: 740px; }
+.blog-modal-date { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px; margin-bottom: 32px; text-transform: uppercase; }
+.blog-modal-content { color: var(--ink); font-size: 15px; line-height: 1.7; }
+.blog-modal-content h1, .blog-modal-content h2, .blog-modal-content h3 { letter-spacing: -.04em; line-height: 1.1; margin: 32px 0 13px; }
+.blog-modal-content h1 { font-size: 34px; }
+.blog-modal-content h2 { font-size: 28px; }
+.blog-modal-content h3 { font-size: 22px; }
+.blog-modal-content p { margin: 0 0 17px; }
+.blog-modal-content ul, .blog-modal-content ol { margin: 0 0 20px; padding-left: 23px; }
+.blog-modal-content li { margin-bottom: 8px; }
+.blog-modal-content img { height: auto; max-width: 100%; }
+.blog-modal-content a { color: var(--orange); }
 .contact-section { background: var(--ink); color: var(--white); min-height: 480px; overflow: hidden; padding: 110px 24px; position: relative; text-align: center; }
 .contact-bg-word { color: rgba(255,255,255,.035); font-family: 'DM Sans', sans-serif; font-size: clamp(130px, 21vw, 340px); font-weight: 700; left: 50%; letter-spacing: -.1em; line-height: .7; position: absolute; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; }
 .contact-inner { margin: 0 auto; max-width: 720px; position: relative; z-index: 1; }
