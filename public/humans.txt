@@ -1,7 +1,7 @@
 /* TEAM */
 Developer: Edgar Rosario
 Known as: Ghostnet
-Project: Overdrive Accounting Services demo
+Project: Overdrive Accounting Services website
 
 /* SITE */
 Website: https://overdriveaccountingservices.com/

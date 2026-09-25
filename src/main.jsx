@@ -112,7 +112,7 @@ const leadership = [
   {
     name: 'Edgar Rosario',
     role: 'IT Lead / Developer - Ghostnet',
-    bio: 'Responsible for the website technology, deployment, security, and technical operations supporting the Overdrive Accounting Services demo.',
+    bio: 'Responsible for the website technology, deployment, security, and technical operations supporting Overdrive Accounting Services.',
     isTechnology: true,
   },
 ]
