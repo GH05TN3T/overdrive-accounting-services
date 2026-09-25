@@ -400,7 +400,7 @@ function MarketingSite() {
           <div className="hero-gridlines" aria-hidden="true" />
           <div className="hero-copy">
             <div className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> Overdrive Accounting Services</div>
-            <h1>Push your business into <em>overdrive.</em></h1>
+            <h1>Push your business into <em>Overdrive.</em></h1>
             <p className="hero-lede">At Overdrive Accounting Services, we champion real results for real achievers. Our holistic approach goes beyond mere number-crunching, aiming to amplify the aspirations of business owners everywhere.</p>
             <div className="hero-actions">
               <a className="button button-accent" href="#appointment">Schedule a free consultation <ArrowUpRight size={18} /></a>
