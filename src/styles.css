@@ -91,6 +91,7 @@ h2 { font-size: clamp(40px, 5vw, 69px); font-weight: 500; letter-spacing: -.065e
 .leader-card { background: var(--sand); }
 .leader-image { height: 250px; overflow: hidden; }
 .leader-image img { filter: saturate(.72); height: 100%; object-fit: cover; width: 100%; }
+.leader-tech-mark { align-items: center; background: var(--ink); color: var(--orange); display: flex; height: 100%; justify-content: center; }
 .leader-content { padding: 22px 19px 25px; }
 .leader-content h3 { font-size: 18px; font-weight: 600; letter-spacing: -.04em; margin: 0 0 5px; }
 .leader-content > span { color: var(--orange); font-family: 'DM Mono', monospace; font-size: 9px; text-transform: uppercase; }

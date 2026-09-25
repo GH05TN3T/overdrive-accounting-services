@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Menu,
   Minus,
+  MonitorCog,
   Phone,
   Play,
   ShieldCheck,
@@ -107,6 +108,12 @@ const leadership = [
     role: 'In House Counsel',
     bio: 'In-house counsel with nearly 10 years of experience advising a small business accounting firm. Well-versed in business law, including contracts, insurance, employment, and workers’ compensation. Experienced in contract review, legal risk management, negotiation, and general business matters. Provides strategic, practical legal guidance to protect the firm and support its continued growth.',
     image: `${assetRoot}2026/09/Shaun-Hodo-1.jpg`,
+  },
+  {
+    name: 'Edgar Rosario',
+    role: 'IT Lead / Developer - Ghostnet',
+    bio: 'Responsible for the website technology, deployment, security, and technical operations supporting the Overdrive Accounting Services demo.',
+    isTechnology: true,
   },
 ]
 
@@ -431,7 +438,7 @@ function MarketingSite() {
           </div>
         </section>
 
-        <section className="leadership-section section-pad about-home-section" aria-labelledby="leadership-title"><div className="section-kicker">Meet our leadership <span /></div><h2 id="leadership-title">The professionals behind <span>Overdrive.</span></h2><div className="leadership-grid">{leadership.map((person) => <article className="leader-card" key={person.name}><div className="leader-image"><img src={person.image} alt={person.name} /></div><div className="leader-content"><h3>{person.name}</h3><span>{person.role}</span><p>{person.bio}</p></div></article>)}</div></section>
+        <section className="leadership-section section-pad about-home-section" aria-labelledby="leadership-title"><div className="section-kicker">Meet our leadership <span /></div><h2 id="leadership-title">The professionals behind <span>Overdrive.</span></h2><div className="leadership-grid">{leadership.map((person) => <article className="leader-card" key={person.name}><div className="leader-image">{person.isTechnology ? <div className="leader-tech-mark"><MonitorCog size={74} strokeWidth={1.2} /></div> : <img src={person.image} alt={person.name} />}</div><div className="leader-content"><h3>{person.name}</h3><span>{person.role}</span><p>{person.bio}</p></div></article>)}</div></section>
 
         <section className="services-section section-pad" id="services">
           <div className="section-heading-row">
