@@ -13,6 +13,7 @@ import {
   X,
 } from 'lucide-react'
 import AdminDashboard from './components/AdminDashboard'
+import AboutPage from './components/AboutPage'
 import AppointmentForm from './components/AppointmentForm'
 import FaqPage from './components/FaqPage'
 import blogContent from './data/blogContent.json'
@@ -386,7 +387,7 @@ function MarketingSite() {
         <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`}>
           <a className="nav-link" href="#services" onClick={closeMenu}>Services</a>
           <a className="nav-link" href="/resources" onClick={closeMenu}>Resources</a>
-          <a className="nav-link" href="#about" onClick={closeMenu}>About us</a>
+          <a className="nav-link" href="/about" onClick={closeMenu}>About us</a>
           <a className="nav-link" href="#insights" onClick={closeMenu}>Insights</a>
           <a className="nav-link nav-portal" href={clientPortalUrl} onClick={closeMenu}><span className="nav-portal-pulse" /> Client portal <ArrowUpRight size={14} /></a>
           <a className="nav-phone" href="tel:352-749-2459" onClick={closeMenu}><Phone size={15} /> (352) 749-2459</a>
@@ -418,7 +419,7 @@ function MarketingSite() {
            <div className="marquee-track"><div className="marquee-group"><span>ACCOUNTING</span><Minus /><span>STRATEGY</span><Minus /><span>GROWTH</span></div><div className="marquee-group" aria-hidden="true"><span>ACCOUNTING</span><Minus /><span>STRATEGY</span><Minus /><span>GROWTH</span></div></div>
         </section>
 
-        <section className="intro section-pad" id="about">
+        <section className="intro section-pad about-home-section" id="about">
            <div className="section-kicker">The accounting partner you deserve <span /></div>
           <div className="intro-layout">
             <h2>The accounting partner <span>you deserve.</span></h2>
@@ -430,7 +431,7 @@ function MarketingSite() {
           </div>
         </section>
 
-        <section className="leadership-section section-pad" aria-labelledby="leadership-title"><div className="section-kicker">Meet our leadership <span /></div><h2 id="leadership-title">The professionals behind <span>Overdrive.</span></h2><div className="leadership-grid">{leadership.map((person) => <article className="leader-card" key={person.name}><div className="leader-image"><img src={person.image} alt={person.name} /></div><div className="leader-content"><h3>{person.name}</h3><span>{person.role}</span><p>{person.bio}</p></div></article>)}</div></section>
+        <section className="leadership-section section-pad about-home-section" aria-labelledby="leadership-title"><div className="section-kicker">Meet our leadership <span /></div><h2 id="leadership-title">The professionals behind <span>Overdrive.</span></h2><div className="leadership-grid">{leadership.map((person) => <article className="leader-card" key={person.name}><div className="leader-image"><img src={person.image} alt={person.name} /></div><div className="leader-content"><h3>{person.name}</h3><span>{person.role}</span><p>{person.bio}</p></div></article>)}</div></section>
 
         <section className="services-section section-pad" id="services">
           <div className="section-heading-row">
@@ -480,7 +481,7 @@ function MarketingSite() {
          {selectedService && <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />}
       </main>
 
-      <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="#about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href={clientPortalUrl}>Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
+      <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><img src={siteLogo} alt="Overdrive Accounting Services" /><p>Strategic accounting and business support for owners ready to move forward.</p><a className="footer-email" href="mailto:Info@OverdriveAccountingServices.com">Info@OverdriveAccountingServices.com <ArrowUpRight size={15} /></a></div><div className="footer-links"><div><span>Explore</span><a href="/about">About us</a><a href="#services">Services</a><a href="#insights">Insights</a></div><div><span>Connect</span><a href="tel:352-749-2459">(352) 749-2459</a><a href="#appointment">Free consultation</a><a href={clientPortalUrl}>Client portal</a></div><div><span>Visit</span><a href="https://maps.google.com/?q=9100+Conroy+Windermere+Road+Windermere+FL+34786">9100 Conroy Windermere Road<br />Suite 200<br />Windermere, FL 34786</a></div></div></div><div className="footer-bottom"><span>© 2024 Overdrive Accounting Services, LLC</span></div></footer>
     </div>
   )
 }
@@ -488,6 +489,7 @@ function MarketingSite() {
 function App() {
   const route = window.location.pathname.replace(/\/+$/, '') || '/'
   if (route === '/admin') return <AdminDashboard />
+  if (route === '/about') return <AboutPage />
   if (route === '/resources') return <ResourcesPage />
   if (route === '/faq') return <FaqPage />
   if (route === '/portal') return <PortalRedirect />

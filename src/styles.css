@@ -85,6 +85,7 @@ h2 { font-size: clamp(40px, 5vw, 69px); font-weight: 500; letter-spacing: -.065e
 .metric strong span { color: var(--orange); font-size: 17px; letter-spacing: -.04em; margin-left: 3px; }
 .metric > span { color: var(--muted); font-size: 11px; }
 .leadership-section { background: var(--paper); }
+.about-home-section { display: none; }
 .leadership-section > h2 { margin-top: 29px; }
 .leadership-grid { display: grid; gap: 18px; grid-template-columns: repeat(4, 1fr); margin-top: 55px; }
 .leader-card { background: var(--sand); }
@@ -227,6 +228,14 @@ blockquote { font-family: 'Playfair Display', serif; font-size: clamp(24px, 3vw,
 .resources-footer { background: var(--ink); color: rgba(255,255,255,.65); display: flex; font-size: 11px; justify-content: space-between; padding: 27px clamp(24px, 7vw, 110px); }
 .resources-footer a { color: var(--orange); }
 .faq-page { background: var(--paper); color: var(--ink); min-height: 100vh; }
+.about-page { background: var(--paper); color: var(--ink); min-height: 100vh; }
+.about-page-hero { align-items: center; background: var(--ink); color: var(--white); display: grid; gap: 70px; grid-template-columns: 1fr 1fr; padding: 120px clamp(24px, 8vw, 130px); }
+.about-page-hero h1 { font-size: clamp(48px, 6vw, 82px); font-weight: 500; letter-spacing: -.07em; line-height: .95; margin: 28px 0 32px; }
+.about-page-hero h1 em { color: var(--orange); font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; }
+.about-page-hero img { filter: saturate(.7); height: 450px; object-fit: cover; width: 100%; }
+.about-page-copy { max-width: 1000px; }
+.about-page-copy h2 { font-size: clamp(34px, 4vw, 55px); margin: 28px 0; }
+.about-page-copy p { color: var(--muted); font-size: 16px; line-height: 1.8; margin: 0; max-width: 900px; }
 .faq-main { margin: 0 auto; max-width: 980px; padding: 95px 24px 100px; }
 .faq-hero { border-bottom: 1px solid var(--line); padding-bottom: 48px; }
 .faq-hero h1 { font-size: clamp(50px, 7vw, 90px); font-weight: 500; letter-spacing: -.08em; line-height: .94; margin: 25px 0 20px; }
@@ -244,6 +253,7 @@ blockquote { font-family: 'Playfair Display', serif; font-size: clamp(24px, 3vw,
 .faq-cta h2 { font-size: 36px; margin: 0 0 12px; }
 .faq-cta p { color: rgba(255,255,255,.65); font-size: 14px; margin: 0 0 25px; }
 @media (max-width: 560px) { .faq-main { padding-top: 65px; } .faq-item > button { font-size: 15px; gap: 15px; } .faq-answer { padding-right: 5px; } .faq-cta { padding: 28px 22px; } }
+@media (max-width: 800px) { .about-page-hero { gap: 45px; grid-template-columns: 1fr; padding-bottom: 80px; padding-top: 80px; } .about-page-hero img { height: 320px; } }
 @media (max-width: 850px) { .resources-header nav { gap: 14px; } .resource-card-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .resources-header { align-items: flex-start; flex-direction: column; gap: 22px; } .resources-header nav { flex-wrap: wrap; } .resources-main { padding-top: 65px; } .resource-card-grid { grid-template-columns: 1fr; } .resources-footer { flex-direction: column; gap: 10px; } }
 .contact-section { background: var(--ink); color: var(--white); min-height: 480px; overflow: hidden; padding: 110px 24px; position: relative; text-align: center; }
