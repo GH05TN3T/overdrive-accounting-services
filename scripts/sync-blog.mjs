@@ -27,6 +27,8 @@ function cleanHtml(html) {
     .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
     .replace(/<form[\s\S]*?<\/form>/gi, '')
     .replace(/\s+on[a-z]+\s*=\s*(["']).*?\1/gi, '')
+    .replace(/development@sharpshelldigital\.com/gi, 'Ghostnet')
+    .replace(/Sharpshell Digital/gi, 'Ghostnet')
     .replace(/href=["']https:\/\/overdriveaccountingservices\.com([^"']*)["']/gi, (_match, path) => `href="${internalLink(path)}"`)
     .replace(/href=["']http:\/\/overdriveaccountingservices\.com([^"']*)["']/gi, (_match, path) => `href="${internalLink(path)}"`)
 }
@@ -37,7 +39,7 @@ for (const slug of slugs) {
   if (!response.ok) throw new Error(`Could not fetch ${slug}: ${response.status}`)
   const items = await response.json()
   if (!items[0]) throw new Error(`Post not found: ${slug}`)
-  posts[slug] = { title: items[0].title.rendered, date: items[0].date, content: cleanHtml(items[0].content.rendered) }
+  posts[slug] = { title: items[0].title.rendered, date: items[0].date, author: 'Ghostnet', content: cleanHtml(items[0].content.rendered) }
 }
 
 await mkdir('src/data', { recursive: true })
